@@ -14,21 +14,18 @@
 //========================================================================
 #define VALUE 1023
 #define VCC 3300
-/*#define VALUE_DOWN_D 0//d
-#define N_PULSOS_D 5 //n
-#define VALUE_UP_D 2000//u  voltaje en mV
-#define TIMER_UP_D 250 //t  tiempo en ms
-#define PERIODO_D 1000 //p*/
+
 
 uint16_t N_PULSOS=5; //n
-uint16_t VALUE_UP=2000;//u  voltaje en mV
+uint16_t VALUE_UP=33;//u  voltaje o corriente
 uint16_t  TIMER_UP=1000; //t  tiempo en ms
 uint16_t  PERIODO=3000; //p
 uint16_t VALUE_DOWN=0;
 uint16_t TIMER_DOWN;
 uint16_t value_down;
 uint16_t value_up;
-
+uint8_t flagVoI=1; //1 Modo corriente
+uint8_t flagPoN=1; //1 Pulsos positivos
 //const uint32_t value_down_d=(VALUE_DOWN_D*1023)/VCC;
 //const uint32_t value_up_d=(VALUE_UP_D*1023)/VCC;
 //const uint32_t TIMER_DOWN_D=PERIODO_D-TIMER_UP_D;
@@ -69,6 +66,10 @@ uint16_t DevolverNumPulsos();
 uint16_t DevolverValueUp();
 uint16_t DevolverTimeUp();
 uint16_t DevolverPeriodo();
+uint8_t DevolverFlagVoI();
+uint8_t DevolverFlagPoN();
+void ModificarFlagVoI(uint8_t);
+void ModificarFlagPoN(uint8_t);
 void ModificarNumPulsos(uint16_t);
 void ModificarTimeUp(uint16_t);
 void ModificarPeriodo(uint16_t);

@@ -24,6 +24,23 @@ uint16_t DevolverPeriodo()
 	return PERIODO;
 }
 
+uint8_t DevolverFlagVoI()
+{
+	return flagVoI;
+}
+uint8_t DevolverFlagPoN()
+{
+	return flagPoN;
+}
+
+void ModificarFlagVoI(uint8_t valor)
+{
+	flagVoI=valor;
+}
+void ModificarFlagPoN(uint8_t valor)
+{
+	flagPoN=valor;
+}
 
 void ModificarNumPulsos(uint16_t pulsos)
 {
@@ -47,10 +64,10 @@ void ModificarValueUp(uint16_t v_up)
 
 void ResetValues()
 {
-	N_PULSOS = 5;
+	//N_PULSOS = 5;
 	TIMER_UP = 1;
 	PERIODO = 5;
-	VALUE_UP = 2000;
+	//VALUE_UP = 2000;
 }
 
 

@@ -9,8 +9,10 @@
 #define MANEJO_DISPLAY_H
 
 
-void MostrarPulsos(uint16_t,uint16_t,uint16_t,uint16_t);
-
+void MostrarPulsos(uint16_t,uint16_t,uint16_t,uint16_t,uint8_t,uint8_t);
+void ActivarCursor(void);
+void DesplazarCursorDerecha(void);
+void DesplazarDisplay(void);
 
 #endif /* MANEJO_DISPLAY_H_ */
 

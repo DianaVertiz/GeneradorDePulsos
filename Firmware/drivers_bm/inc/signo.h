@@ -1,13 +1,7 @@
-/* Copyright 2016, 
- * Eduardo Filomena
- * efilomena@bioingenieria.edu.ar
- * Juan Manuel Reta
- * jmrera@bioingenieria.edu.ar
- * Facultad de Ingeniería
- * Universidad Nacional de Entre Ríos
- * Argentina
- *
+/* Copyright 2016, XXXXXXXXXX
  * All rights reserved.
+ *
+ * This file is part of CIAA Firmware.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
@@ -36,13 +30,35 @@
  * POSSIBILITY OF SUCH DAMAGE.
  *
  */
-#ifndef GPIO_H
-#define GIPO_H
 
+#ifndef SIGNO_H
+#define SIGNO_H
+/** \brief Bare Metal example header file
+ **
+ ** This is a mini example of the CIAA Firmware
+ **
+ **/
+
+/** \addtogroup CIAA_Firmware CIAA Firmware
+ ** @{ */
+/** \addtogroup Examples CIAA Firmware Examples
+ ** @{ */
+/** \addtogroup Baremetal Bare Metal example header file
+ ** @{ */
+
+
+ //Initials     Name
+
+//#define TRUE 1
+
+/*
+ * modification history (new versions first)
+ * -----------------------------------------------------------
+ * yyyymmdd v0.0.1 initials initial version
+ */
 
 /*==================[inclusions]=============================================*/
 #include "stdint.h"
-#include "chip.h"
 
 /*==================[macros]=================================================*/
 #define lpc4337            1
@@ -51,54 +67,11 @@
 /*==================[typedef]================================================*/
 
 /*==================[external data declaration]==============================*/
-/** \brief Definition of constants to reference the EDU-CIAA GPIO.
- **
- **/
-enum GPIO_NUM {GPIO0,GPIO1,GPIO2,GPIO3,GPIO4,GPIO5,GPIO6,GPIO7,GPIO8};
-
-
-/** \brief Definition of constants to control the EDU-CIAA GPIO.
- **
- **/
-enum GPIO_CONFIG {INPUT,OUTPUT,INPUT_PUP,INPUT_PDN_INPUT_PUP_PDN};
-
-#define OUTPUT   1
-#define INPUT    0
-
 
 /*==================[external functions declaration]=========================*/
 
-/** \brief Initialization function of EDU-CIAA GPIO
- **
- ** 
- ** \return TRUE if no error
- **/
-uint8_t Init_GPIO(void);
-
-/** \brief Direction setting of  GPIO
- **
- ** 
- ** \param[in] GPIO number (GPIO0... GPIO8)  and config (INPUT,OUTPUT, INPUT_PUP.....)
- ** 
- ** \return TRUE if no error
- **/
-uint8_t GPIO_Set_Dir(uint8_t gpio_num,uint8_t gpio_config);
- 
-/** \brief Function to write on a specific GPIO 
- ** 
- ** \param[in] GPIO number (GPIO0... GPIO8) and status (0 or 1,  TRUE or FALSE)
- **
- ** \return FALSE if an error occurs, in other case returns TRUE
- **/
-uint8_t GPIO_Write(uint8_t gpio_num, uint8_t status);
-
-/** \brief Function to read a specific GPIO 
- ** 
- ** \param[in] GPIO number (GPIO0... GPIO8)
- **
- ** \return 0 or 1
- **/
-uint8_t GPIO_Read(uint8_t gpio_num);
+void InicializarSigno(void);
+void PulsosNegativos();
 
 
 
@@ -106,5 +79,5 @@ uint8_t GPIO_Read(uint8_t gpio_num);
 /** @} doxygen end group definition */
 /** @} doxygen end group definition */
 /*==================[end of file]============================================*/
-#endif /* #ifndef GPIO_H */
+#endif /* #ifndef MI_NUEVO_PROYECTO_H */
 

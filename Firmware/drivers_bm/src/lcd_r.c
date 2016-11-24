@@ -70,7 +70,7 @@ void lcd_init(void)
 	//Paso 5)---PRIMERO---- Enviar: D7,D6,D5,D4=0010----- RS=0 -----
 	//---DESPUES---- Enviar: D7,D6,D5,D4=1111------ RS=0 ----
 	delay();
-	//. . . . . .*/ /* Asignar valores a los bits
+	//. . . . . .*/ /* Asignar valores a los bits FUNCTION SET
 	data.D1=0;
 	data.D2=1;
 	data.D3=0;
@@ -89,7 +89,7 @@ void lcd_init(void)
 	//Paso 6)---PRIMERO----- Enviar: ---D7,D6,D5,D4=0000------ RS=0 --
 	//---DESPUES----- Enviar: ---D7,D6,D5,D4=1000------ RS=0 --
 	delay();
-	//. . . . . .*/ /* Asignar valores a los bits
+	//. . . . . .*/ /* Asignar valores a los bits DISPLAY ON/0FF CONTROL??
 	data.D1=0;
 	data.D2=0;
 	data.D3=0;
@@ -110,7 +110,7 @@ void lcd_init(void)
 	//---DESPUES--------D7,D6,D5,D4=0001------------------
 
 	delay();
-	//. . . . . .*/ /* Asignar valores a los bits
+	//. . . . . .*/ /* Asignar valores a los bits  CLEAR DISPLAY
 	data.D1=0;
 	data.D2=0;
 	data.D3=0;
@@ -130,7 +130,7 @@ void lcd_init(void)
 	//Paso 8)---PRIMERO--------D7,D6,D5,D4=0000------------------
 	//---DESPUES--------D7,D6,D5,D4=0110------------------
 	delay();
-	//. . . . . .*/ /* Asignar valores a los bits
+	//. . . . . .*/ /* Asignar valores a los bits ENTRY MODE SET
 	data.D1=0;
 	data.D2=0;
 	data.D3=0;
@@ -162,8 +162,8 @@ void lcd_init(void)
 	enviar_lcd(data);
 	delay();
 	//. . . . . .*/ /* Asignar valores a los bits
-	data.D1=0;
-	data.D2=0;
+	data.D1=0; //habilita parpadeo
+	data.D2=0; //habilita cursor
 	data.D3=1;
 	data.D4=1;
 	data.RS=0;
@@ -297,3 +297,5 @@ void delay(void)
 	long int i=0,x=0;
 	for(i=0; i<9999; i++){x++;}
 }
+
+

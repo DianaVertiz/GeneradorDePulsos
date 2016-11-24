@@ -36,10 +36,10 @@
 
 #include "GenPulsosV2.h"
 #include "led.h"
-#include "teclas.h"
 #include "dac.h"
 #include "timer.h"
 #include "timer2.h"
+#include "GPIO.h"
 
 //=========================================================================
 
@@ -78,10 +78,12 @@ void UART2_IRQHandler()
 int main(void)
 
 {
-	uint16_t dato[2] ={0};
-	uint16_t dat;
-	uint8_t i=0;
+	//uint16_t dato[2] ={0};
+	//uint16_t dat;
+ 	uint8_t aux=0;
+	uint8_t	aux2=1;
 
+	inicializarPulsadores();
 	InicializarLeds();
 	InicializarDAC();
 	InicializaTimer0();
@@ -89,13 +91,21 @@ int main(void)
 	IniciarUart();
 	lcd_init_port();
 	lcd_init();
-	InicializarGpio();
-	//PulsosNegativos();
-	MostrarPulsos(DevolverNumPulsos(),DevolverValueUp(),DevolverTimeUp(),DevolverPeriodo());
-
+	InicializarSigno();
+	MostrarPulsos(DevolverNumPulsos(),DevolverValueUp(),DevolverTimeUp(),DevolverPeriodo(),DevolverFlagVoI(),DevolverFlagPoN());
+	ActivarCursor();
+	RetornoCasa();
+	DesplazarCursorDerecha();
+	//DesplazarDisplay();
 	while(1)
 	{
 		caracter=Leer_intUART();
+
+		/*if (GPIO_Read(GPIO0))
+			{EncenderLeds(LED0_R);}
+		else
+			{ApagarLeds(LED0_R);}*/
+		probarPulsadores();
 
 		switch(caracter)
 		{
@@ -112,9 +122,28 @@ int main(void)
     	    		ReadModifyV();break;
     	    case 'q':
     	    		ResetValues();break;
-    	    case 'r':
-    	    		MostrarPulsos(DevolverNumPulsos(),DevolverValueUp(),DevolverTimeUp(),DevolverPeriodo());
+    	    case 'u':
+    	    		ModificarFlagVoI(aux2);
+    	    		MostrarPulsos(DevolverNumPulsos(),DevolverValueUp(),DevolverTimeUp(),DevolverPeriodo(),DevolverFlagVoI(),DevolverFlagPoN());
+    	    		break;
+    	    case 'w':
+    	       	    ModificarFlagVoI(aux);
+    	    		MostrarPulsos(DevolverNumPulsos(),DevolverValueUp(),DevolverTimeUp(),DevolverPeriodo(),DevolverFlagVoI(),DevolverFlagPoN());
+    	       	    break;
+    	    case 'o':
+    	        	ModificarFlagPoN(aux2);
+    	        	PulsosPositivos();
+    	        	MostrarPulsos(DevolverNumPulsos(),DevolverValueUp(),DevolverTimeUp(),DevolverPeriodo(),DevolverFlagVoI(),DevolverFlagPoN());
+    	        	break;
+    	    case 's':
+    	        	ModificarFlagPoN(aux);
+    	        	PulsosNegativos();
+    	        	MostrarPulsos(DevolverNumPulsos(),DevolverValueUp(),DevolverTimeUp(),DevolverPeriodo(),DevolverFlagVoI(),DevolverFlagPoN());
+    	        	break;
 
+    	    case 'r':
+    	    		MostrarPulsos(DevolverNumPulsos(),DevolverValueUp(),DevolverTimeUp(),DevolverPeriodo(),DevolverFlagVoI(),DevolverFlagPoN());
+    	    		break;
     	}
 
 	}
