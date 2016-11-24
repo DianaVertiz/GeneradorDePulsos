@@ -36,7 +36,7 @@
     <property name="geometry">
      <rect>
       <x>50</x>
-      <y>250</y>
+      <y>310</y>
       <width>89</width>
       <height>81</height>
      </rect>
@@ -527,11 +527,11 @@ Reflex</string>
      </item>
     </layout>
    </widget>
-   <widget class="QWidget" name="">
+   <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
-      <x>220</x>
-      <y>74</y>
+      <x>270</x>
+      <y>70</y>
       <width>363</width>
       <height>271</height>
      </rect>
@@ -542,7 +542,7 @@ Reflex</string>
        <property name="orientation">
         <enum>Qt::Vertical</enum>
        </property>
-       <widget class="QWidget" name="">
+       <widget class="QWidget" name="layoutWidget">
         <layout class="QGridLayout" name="gridLayout_4">
          <property name="topMargin">
           <number>0</number>
@@ -646,6 +646,9 @@ Reflex</string>
          </property>
          <property name="decimals">
           <number>0</number>
+         </property>
+         <property name="maximum">
+          <double>100.000000000000000</double>
          </property>
          <property name="singleStep">
           <double>1.000000000000000</double>
@@ -951,10 +954,81 @@ Reflex</string>
      </item>
     </layout>
    </widget>
+   <widget class="QWidget" name="">
+    <property name="geometry">
+     <rect>
+      <x>50</x>
+      <y>150</y>
+      <width>161</width>
+      <height>106</height>
+     </rect>
+    </property>
+    <layout class="QFormLayout" name="formLayout_3">
+     <property name="verticalSpacing">
+      <number>19</number>
+     </property>
+     <item row="0" column="0">
+      <widget class="QLabel" name="label_5">
+       <property name="font">
+        <font>
+         <family>Arial</family>
+         <pointsize>12</pointsize>
+        </font>
+       </property>
+       <property name="text">
+        <string>Tipo de Estimulación:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="0">
+      <widget class="QComboBox" name="SalidaVoI">
+       <property name="font">
+        <font>
+         <family>Arial</family>
+         <pointsize>12</pointsize>
+        </font>
+       </property>
+       <item>
+        <property name="text">
+         <string>Salida en corriente</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Salida en tensión</string>
+        </property>
+       </item>
+      </widget>
+     </item>
+     <item row="2" column="0">
+      <widget class="QComboBox" name="SalidaPoN">
+       <property name="font">
+        <font>
+         <family>Arial</family>
+         <pointsize>12</pointsize>
+        </font>
+       </property>
+       <item>
+        <property name="text">
+         <string>Pulsos positivos</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Pulsos negativos</string>
+        </property>
+       </item>
+      </widget>
+     </item>
+    </layout>
+   </widget>
    <zorder>layoutWidget</zorder>
    <zorder>layoutWidget</zorder>
    <zorder>Configurar</zorder>
    <zorder>layoutWidget</zorder>
+   <zorder>label_5</zorder>
+   <zorder>SalidaVoI</zorder>
+   <zorder>SalidaPoN</zorder>
   </widget>
   <widget class="QMenuBar" name="menuBar">
    <property name="geometry">

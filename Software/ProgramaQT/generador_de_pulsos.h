@@ -36,6 +36,8 @@ private slots:
 
     void ConfValUp();
 
+    void ConfValUp_tension();
+
     void on_MandarPulsos_clicked();
 
     void on_ValoresDefault_clicked();
@@ -82,11 +84,20 @@ private slots:
 
     void on_toolButton_18_clicked();
 
-
     void on_radioButton_clicked();
+
+    void on_SalidaVoI_highlighted(const QString &arg1);
+
+    void on_SalidaPoN_highlighted(const QString &arg1);
+
+    void configurarVoI();
+
+    void configurarPoN();
 
 private:
     Ui::Generador_de_pulsos *ui;
+    int flagVoI=1; //1 en modo corriente
+    int flagPoN=1; //1 pulsos positivos
 };
 
 #endif // GENERADOR_DE_PULSOS_H
