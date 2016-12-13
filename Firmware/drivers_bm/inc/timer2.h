@@ -5,6 +5,7 @@
 
 /*==================[inclusions]=============================================*/
 #include "stdint.h"
+#define TIMER2_IRQn 14
 
 #define TICKRATE_HZ 1000
 
@@ -17,7 +18,13 @@ void ResetTimer1(void);
 void InicializaTimer0(void);
 void TemporizadorTimer0(uint32_t);
 void ResetTimer0(void);
-
+void InicializaTimer2(void);
+void TemporizadorTimer2(uint32_t);
+void ResetTimer2(void);
+void InitTimer2_MatchInterrupt(uint32_t);
+void FinTimer2_MatchInt(void);
+void InitInterrupt2();
+void FinInterrupt2();
 
 
 

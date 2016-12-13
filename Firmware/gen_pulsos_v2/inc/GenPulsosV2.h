@@ -79,6 +79,7 @@ uint8_t GetBanderaRT(void);
 void Esperar(void);
 void Interrupcion(void);
 void UART2_IRQHandler(void);
+void TIMER2_IRQHandler(void);
 
 
 #else

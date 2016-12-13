@@ -297,55 +297,55 @@ uint8_t GPIO_Read(uint8_t gpio_num)
     switch (gpio_num)
 	{
 	case GPIO0: 
-	  if (Chip_GPIO_ReadPortBit(LPC_GPIO_PORT,GPIO0_PORT,GPIO0_BIT))
+	  if (Chip_GPIO_GetPinState(LPC_GPIO_PORT,GPIO0_PORT,GPIO0_BIT))
 	    return TRUE;
 	  else 
         return FALSE;	  
 	  break;
 	case GPIO1:
-	  if (Chip_GPIO_ReadPortBit(LPC_GPIO_PORT,GPIO1_PORT,GPIO1_BIT))
+	  if (Chip_GPIO_GetPinState(LPC_GPIO_PORT,GPIO1_PORT,GPIO1_BIT))
 	    return TRUE;
 	  else
         return FALSE;
 	  break;
 	case GPIO2:
-	  if (Chip_GPIO_ReadPortBit(LPC_GPIO_PORT,GPIO2_PORT,GPIO2_BIT))
+	  if (Chip_GPIO_GetPinState(LPC_GPIO_PORT,GPIO2_PORT,GPIO2_BIT))
 	    return TRUE;
 	  else
         return FALSE;
 	  break;
 	case GPIO3:
-	  if (Chip_GPIO_ReadPortBit(LPC_GPIO_PORT,GPIO3_PORT,GPIO3_BIT))
+	  if (Chip_GPIO_GetPinState(LPC_GPIO_PORT,GPIO3_PORT,GPIO3_BIT))
 	    return TRUE;
 	  else
         return FALSE;
 	  break;
 	case GPIO4:
-	  if (Chip_GPIO_ReadPortBit(LPC_GPIO_PORT,GPIO4_PORT,GPIO4_BIT))
+	  if (Chip_GPIO_GetPinState(LPC_GPIO_PORT,GPIO4_PORT,GPIO4_BIT))
 	    return TRUE;
 	  else
         return FALSE;
 	  break;
 	case GPIO5:
-	  if (Chip_GPIO_ReadPortBit(LPC_GPIO_PORT,GPIO5_PORT,GPIO5_BIT))
+	  if (Chip_GPIO_GetPinState(LPC_GPIO_PORT,GPIO5_PORT,GPIO5_BIT))
 	    return TRUE;
 	  else
         return FALSE;
 	  break;
 	case GPIO6:
-	  if (Chip_GPIO_ReadPortBit(LPC_GPIO_PORT,GPIO6_PORT,GPIO6_BIT))
+	  if (Chip_GPIO_GetPinState(LPC_GPIO_PORT,GPIO6_PORT,GPIO6_BIT))
 	    return TRUE;
 	  else
         return FALSE;
 	  break;
 	case GPIO7:
-	  if (Chip_GPIO_ReadPortBit(LPC_GPIO_PORT,GPIO7_PORT,GPIO7_BIT))
+	  if (Chip_GPIO_GetPinState(LPC_GPIO_PORT,GPIO7_PORT,GPIO7_BIT))
 	    return TRUE;
 	  else
         return FALSE;
 	  break;
 	case GPIO8:
-	  if (Chip_GPIO_ReadPortBit(LPC_GPIO_PORT,GPIO8_PORT,GPIO8_BIT))
+	  if (Chip_GPIO_GetPinState(LPC_GPIO_PORT,GPIO8_PORT,GPIO8_BIT))
 	    return TRUE;
 	  else
         return FALSE;

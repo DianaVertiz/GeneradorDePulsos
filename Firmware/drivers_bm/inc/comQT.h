@@ -22,6 +22,10 @@ void ReadModifyN(void);
 void ReadModifyT(void);
 void ReadModifyP(void);
 void ReadModifyV(void);
+void WriteN(void);
+void WriteV(void);
+void WriteT(void);
+void WriteP(void);
 
 
 #endif /* COMQT_H_ */

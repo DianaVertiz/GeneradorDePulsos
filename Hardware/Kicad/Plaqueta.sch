@@ -1188,4 +1188,10 @@ Wire Wire Line
 	850  5550 1100 5550
 Wire Wire Line
 	1100 5550 1100 5750
+Text Label 8750 2675 0    60   ~ 0
+R12=
+Text Label 8675 2775 0    60   ~ 0
+4k7//1K
+Text Label 5100 4725 0    60   ~ 0
+R9=2K2//8K2
 $EndSCHEMATC

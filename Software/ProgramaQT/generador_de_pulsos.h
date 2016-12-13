@@ -20,6 +20,12 @@ public:
     ~Generador_de_pulsos();
 
 private slots:
+    void recibir_comVirtual();
+
+    void ConfInicio();
+
+   // void readEduciaa();
+
     void on_NPulsos();
 
     void on_Tup();
@@ -42,7 +48,7 @@ private slots:
 
     void on_ValoresDefault_clicked();
 
-    void on_Configurar_clicked();
+    void on_Stop_clicked();
 
     void on_toolButton_clicked();
 
@@ -93,6 +99,16 @@ private slots:
     void configurarVoI();
 
     void configurarPoN();
+
+    void on_ValueN_valueChanged(int arg1);
+
+    void on_doubleSpinBox_valueChanged(double arg1);
+
+    void on_ValueT_valueChanged(int arg1);
+
+    void on_ValueP_valueChanged(int arg1);
+
+    void on_radioButton_2_clicked();
 
 private:
     Ui::Generador_de_pulsos *ui;

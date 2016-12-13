@@ -41,13 +41,17 @@
 #include "timer2.h"
 #include "GPIO.h"
 
+
 //=========================================================================
+
 
 uint8_t BAND=1;
 uint8_t FLAG=1;
 uint8_t caracter=0;
 char aux[3]={0} ;
 uint8_t valor =0;
+
+
 
 void SetBanderaRT()
 {
@@ -56,7 +60,10 @@ void SetBanderaRT()
 uint8_t GetBanderaRT(){return FLAG;}
 
 void Interrupcion(){
+
 	SetBanderaRT();
+
+
 	LimpiarBandera();
 }
 void Esperar()
@@ -75,74 +82,153 @@ void UART2_IRQHandler()
 
 }
 
+void TIMER2_IRQHandler()
+{
+	if (Chip_TIMER_MatchPending(LPC_TIMER2, 2))
+		{
+			ClearDisplay();
+
+			MostrarPulsos(DevolverNumPulsos(),DevolverValueUp(),DevolverTimeUp(),DevolverPeriodo(),DevolverFlagVoI(),DevolverFlagPoN());
+
+			Chip_TIMER_ClearMatch(LPC_TIMER2, 2);
+
+		}
+	//FinTimer2_MatchInt();
+}
+
+
 int main(void)
 
 {
-	//uint16_t dato[2] ={0};
-	//uint16_t dat;
  	uint8_t aux=0;
 	uint8_t	aux2=1;
 
+
 	inicializarPulsadores();
+
 	InicializarLeds();
 	InicializarDAC();
 	InicializaTimer0();
 	InicializaTimer1();
+
 	IniciarUart();
 	lcd_init_port();
 	lcd_init();
-	InicializarSigno();
+
+	arriba();
 	MostrarPulsos(DevolverNumPulsos(),DevolverValueUp(),DevolverTimeUp(),DevolverPeriodo(),DevolverFlagVoI(),DevolverFlagPoN());
-	ActivarCursor();
-	RetornoCasa();
-	DesplazarCursorDerecha();
-	//DesplazarDisplay();
+	InicializarSigno();
+	InicializarStop();
+	//InitTimer2_MatchInterrupt(800);
 	while(1)
 	{
+
 		caracter=Leer_intUART();
 
-		/*if (GPIO_Read(GPIO0))
-			{EncenderLeds(LED0_R);}
-		else
-			{ApagarLeds(LED0_R);}*/
-		probarPulsadores();
+		if(!(pulsado(BtnEnter))) //Abre el menu
+		{
+			//FinInterrupt2();
+
+			TemporizadorTimer0(500);
+			ResetTimer0();
+			OpenMenu();
+			//InitInterrupt2();
+			MostrarPulsos(DevolverNumPulsos(),DevolverValueUp(),DevolverTimeUp(),DevolverPeriodo(),DevolverFlagVoI(),DevolverFlagPoN());
+		}
+
+		if(!(pulsado(BtnLeft))) //Estimula
+
+		{	//FinInterrupt2();
+			GenerarPulsos();
+			//InitInterrupt2();
+		}
+
+		if(!(pulsado(BtnRight))) //STOP
+
+		{
+			//FinInterrupt2();
+			TemporizadorTimer0(1000);
+			ResetTimer0();
+
+			CambiarEstado();
+
+			if(ReadStop())
+			{
+				MensajeScroll();
+			}
+			else
+			{
+				MostrarPulsos(DevolverNumPulsos(),DevolverValueUp(),DevolverTimeUp(),DevolverPeriodo(),DevolverFlagVoI(),DevolverFlagPoN());
+			}
+
+		  //InitInterrupt2();
+
+		}
+
 
 		switch(caracter)
 		{
 
-    		case 'e':
-    				GenerarPulsos();break;
+    		case 'e': FinInterrupt2();
+    				  GenerarPulsos();
+    				  InitInterrupt2();break;
+
     	    case 'n':
-    	    		ReadModifyN();break;
+    	    		ReadModifyN();
+    	    		MostrarNumPulsos(DevolverNumPulsos());
+    	    		//MostrarPulsos(DevolverNumPulsos(),DevolverValueUp(),DevolverTimeUp(),DevolverPeriodo(),DevolverFlagVoI(),DevolverFlagPoN());
+    	    		break;
     	    case 't':
-    	    		ReadModifyT();break;
+    	    		ReadModifyT();
+    	    		MostrarTUp(DevolverTimeUp());
+    	    		//MostrarPulsos(DevolverNumPulsos(),DevolverValueUp(),DevolverTimeUp(),DevolverPeriodo(),DevolverFlagVoI(),DevolverFlagPoN());
+    	    		break;
     	    case 'p':
-    	    		ReadModifyP();break;
+    	    		ReadModifyP();
+    	    		MostrarPeriodo(DevolverPeriodo());
+    	    		//MostrarPulsos(DevolverNumPulsos(),DevolverValueUp(),DevolverTimeUp(),DevolverPeriodo(),DevolverFlagVoI(),DevolverFlagPoN());
+    	    		break;
     	    case 'v':
-    	    		ReadModifyV();break;
+    	    		ReadModifyV();
+    	    		MostrarAmplitud(DevolverValueUp(),DevolverFlagVoI(),DevolverFlagPoN());
+    	    		//MostrarPulsos(DevolverNumPulsos(),DevolverValueUp(),DevolverTimeUp(),DevolverPeriodo(),DevolverFlagVoI(),DevolverFlagPoN());
+    	    		break;
     	    case 'q':
     	    		ResetValues();break;
     	    case 'u':
     	    		ModificarFlagVoI(aux2);
-    	    		MostrarPulsos(DevolverNumPulsos(),DevolverValueUp(),DevolverTimeUp(),DevolverPeriodo(),DevolverFlagVoI(),DevolverFlagPoN());
+    	    		MostrarAmplitud(DevolverValueUp(),DevolverFlagVoI(),DevolverFlagPoN());
+    	    		//MostrarPulsos(DevolverNumPulsos(),DevolverValueUp(),DevolverTimeUp(),DevolverPeriodo(),DevolverFlagVoI(),DevolverFlagPoN());
     	    		break;
     	    case 'w':
     	       	    ModificarFlagVoI(aux);
-    	    		MostrarPulsos(DevolverNumPulsos(),DevolverValueUp(),DevolverTimeUp(),DevolverPeriodo(),DevolverFlagVoI(),DevolverFlagPoN());
+    	       	    MostrarAmplitud(DevolverValueUp(),DevolverFlagVoI(),DevolverFlagPoN());
+    	    		//MostrarPulsos(DevolverNumPulsos(),DevolverValueUp(),DevolverTimeUp(),DevolverPeriodo(),DevolverFlagVoI(),DevolverFlagPoN());
     	       	    break;
     	    case 'o':
     	        	ModificarFlagPoN(aux2);
     	        	PulsosPositivos();
-    	        	MostrarPulsos(DevolverNumPulsos(),DevolverValueUp(),DevolverTimeUp(),DevolverPeriodo(),DevolverFlagVoI(),DevolverFlagPoN());
+    	        	MostrarAmplitud(DevolverValueUp(),DevolverFlagVoI(),DevolverFlagPoN());
+    	        	//MostrarPulsos(DevolverNumPulsos(),DevolverValueUp(),DevolverTimeUp(),DevolverPeriodo(),DevolverFlagVoI(),DevolverFlagPoN());
     	        	break;
     	    case 's':
     	        	ModificarFlagPoN(aux);
     	        	PulsosNegativos();
-    	        	MostrarPulsos(DevolverNumPulsos(),DevolverValueUp(),DevolverTimeUp(),DevolverPeriodo(),DevolverFlagVoI(),DevolverFlagPoN());
+    	        	MostrarAmplitud(DevolverValueUp(),DevolverFlagVoI(),DevolverFlagPoN());
+    	        	//MostrarPulsos(DevolverNumPulsos(),DevolverValueUp(),DevolverTimeUp(),DevolverPeriodo(),DevolverFlagVoI(),DevolverFlagPoN());
     	        	break;
 
     	    case 'r':
-    	    		MostrarPulsos(DevolverNumPulsos(),DevolverValueUp(),DevolverTimeUp(),DevolverPeriodo(),DevolverFlagVoI(),DevolverFlagPoN());
+    	    		CambiarEstado();
+	    			if(ReadStop())
+    	    		{
+    	    			MensajeScroll();
+    	    		}
+    	    		else
+    	    		{
+    	    			MostrarPulsos(DevolverNumPulsos(),DevolverValueUp(),DevolverTimeUp(),DevolverPeriodo(),DevolverFlagVoI(),DevolverFlagPoN());
+    	    		}
+
     	    		break;
     	}
 

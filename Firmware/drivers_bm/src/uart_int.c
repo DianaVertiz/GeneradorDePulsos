@@ -56,16 +56,23 @@ void IniciarInt()
 
 void EnviarMensaje(char* mensaje, uint8_t size)//size es número de bytes
 {
-
 	uint8_t *pdat;
 
 	pdat = (uint8_t *) &mensaje[0];
 
 	Chip_UART_Send(LPC_USART2, pdat, size);
 
-
-
 }
+
+void uartWriteString(char* str ){
+   while(*str != 0){
+	  uartWriteByte((uint8_t)*str );
+	  str++;
+   }
+}
+
+
+
 
 uint8_t Leer_intUART(void)
 {

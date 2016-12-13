@@ -69,5 +69,24 @@ void ReadModifyV()
 	ModificarValueUp(dat);
 }
 
+void WriteN()
+{
+
+	uartWriteByte(DevolverNumPulsos());
+}
+void WriteV()
+{
+
+}
+void WriteT()
+{
+
+}
+void WriteP()
+{
+
+}
+
+
 
 

@@ -233,7 +233,7 @@ void (* const g_pfnVectors[])(void) = {
    Interrupcion,      /* 0x1b 0x0000006C - No Handler set for ISR RIT (IRQ 11) */
    ISR_NoHandler,      /* 0x1c 0x00000070 - No Handler set for ISR TIMER0 (IRQ 12) */
    ISR_NoHandler,      /* 0x1d 0x00000074 - No Handler set for ISR TIMER1 (IRQ 13) */
-   ISR_NoHandler,      /* 0x1e 0x00000078 - No Handler set for ISR TIMER2 (IRQ 14) */
+   TIMER2_IRQHandler,      /* 0x1e 0x00000078 - No Handler set for ISR TIMER2 (IRQ 14) */
    ISR_NoHandler,      /* 0x1f 0x0000007C - No Handler set for ISR TIMER3 (IRQ 15) */
    ISR_NoHandler,      /* 0x20 0x00000080 - No Handler set for ISR MCPWM (IRQ 16) */
    ISR_NoHandler,      /* 0x21 0x00000084 - No Handler set for ISR ADC0 (IRQ 17) */

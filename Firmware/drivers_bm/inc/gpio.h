@@ -43,6 +43,11 @@
 /*==================[inclusions]=============================================*/
 #include "stdint.h"
 #include "chip.h"
+#define BtnUp	GPIO0
+#define BtnDown	GPIO4
+#define BtnLeft GPIO1
+#define BtnRight GPIO3
+#define BtnEnter GPIO2
 
 /*==================[macros]=================================================*/
 #define lpc4337            1

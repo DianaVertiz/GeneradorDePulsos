@@ -71,7 +71,8 @@
 /*==================[external functions declaration]=========================*/
 
 void InicializarSigno(void);
-void PulsosNegativos();
+void PulsosNegativos(void);
+void PulsosPositivos(void);
 
 
 
