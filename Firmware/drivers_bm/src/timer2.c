@@ -12,25 +12,7 @@
 #else
 #endif
 
-/*
 
-void InicializaRitTimer(){
-	Chip_RIT_Init(LPC_RITIMER);*
-	NVIC_EnableIRQ(RITIMER_IRQn);
-
-}
-
-void TemporizadorRT(uint32_t intervalo)
-{
-
-	Chip_RIT_SetTimerInterval(LPC_RITIMER, intervalo);
-
-
-}
-void LimpiarBanderaRT(){
-Chip_RIT_ClearInt(LPC_RITIMER);
-}
-*/
 void InicializaTimer1()
 {
 		uint32_t timerFreq;
@@ -156,7 +138,7 @@ void InitTimer2_MatchInterrupt(uint32_t tim)
 
 	Chip_TIMER_SetMatch(LPC_TIMER2, 2, tim);
 
-	Chip_TIMER_ResetOnMatchEnable(LPC_TIMER2, 2);
+	//Chip_TIMER_ResetOnMatchEnable(LPC_TIMER2, 2);
 
 	Chip_TIMER_Enable(LPC_TIMER2);
 

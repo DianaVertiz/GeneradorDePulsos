@@ -37,3 +37,12 @@ void CambiarEstado()
 			}
 }
 
+void ActivarPin()
+{
+	Chip_GPIO_SetPinOutHigh(LPC_GPIO_PORT, 3,6);
+}
+
+void DesactivarPin()
+{
+	Chip_GPIO_SetPinOutLow(LPC_GPIO_PORT, 3,6);
+}

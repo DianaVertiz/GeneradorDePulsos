@@ -15,11 +15,17 @@
 #include "chip.h"
 #include "core_cm4.h"
 #include "adc.h"
+#include "lcd_r.h"
+#include "puertos_lcd_r.h"
+
+
+
+
 #elif (mk60fx512vlq15 == CPU)
 #else
 #endif
 
-uint16_t GuardarDato(uint8_t* variable, uint8_t tamanio)
+uint16_t GuardarDato(uint8_t* variable, uint8_t tamanio, uint16_t var)
 {
 	uint8_t i,j;
 	uint16_t aux=0;
@@ -30,24 +36,36 @@ uint16_t GuardarDato(uint8_t* variable, uint8_t tamanio)
 
 	for(j=0; j<tamanio; j++)
 	{
-		if(variable[j]==15)
+		if(variable[j]==15) //cuento las veces que aparece 15 (sin valor)  en el vector variable con aux2
 		{
 			aux2++;
 			flag=1;
+			//Si aux2 == a tamanio, entonces no se ingresó valor
 		}
 	}
 
 	if(flag==1)
 	{
-		for(i=tamanio; i>0; i--)
-			{
-				if(variable[i-1]!=15)
-					{
+
+		if(aux2 !=tamanio)
+		{
+			for(i=tamanio; i>0; i--)
+				{
+					if(variable[i-1]!=15)
+						{
 						aux = variable[i-1]*(pow(10,((i-1)-aux2)));
 						dato_guardado=dato_guardado + aux;
-					}
+						}
 
-			}
+				}
+		}
+
+		else
+		{
+			dato_guardado=var;
+		}
+
+
 	}
 
 	else
@@ -74,43 +92,97 @@ void Conf_previa()
 	uint8_t variable=1;
 	uint8_t signo=1;//pulsos positivos
 	uint8_t tipo=1;//modo corriente
-	PosicionarCursor(1,1);
-	arrow();
+
 	PosicionarCursor(2,1);
-	printf_lcd("pulsos positivos");
+	if(DevolverFlagPoN()==1)
+	{	signo=1;
+
+		printf_lcd("P. positivos    ");
+
+	}
+	else
+	{
+		signo=0;
+		printf_lcd("P. Negativos    ");
+	}
+
 	PosicionarCursor(2,2);
-	printf_lcd("pulsos en mA    ");
+	if(DevolverFlagVoI()==1)
+	{	tipo=1;
+		printf_lcd("Pulsos en mA    ");
+	}
+	else
+	{
+		tipo=0;
+		printf_lcd("Pulsos en V     ");
+	}
+
 
 	while(!(variable==3))
 	{
 		if(!(pulsado(BtnDown)))
 		{
+			TemporizadorTimer0(500);
+			ResetTimer0();
 			variable++;
 		}
+		if(!(pulsado(BtnUp)))
+		{
+			TemporizadorTimer0(500);
+			ResetTimer0();
+			if(variable==2)
+			{variable--;}
+		}
+
 
 		if(variable==1 && !(pulsado(BtnEnter)))
 		{
 			TemporizadorTimer0(500);
 			ResetTimer0();
+
 			if(signo==1){signo=0;}
 			else if(signo==0){signo=1;}
 			PosicionarCursor(2,1);
-			if(signo==1) {printf_lcd("pulsos positivos");
-							ModificarFlagPoN(1);}
-			if(signo==0) {printf_lcd("pulsos negativos");
-							ModificarFlagPoN(0);}
+			if(signo==1) {printf_lcd("P. Positivos    ");
+							ModificarFlagPoN(1);
+							PulsosPositivos();
+						  }
+			if(signo==0) {printf_lcd("P. Negativos    ");
+							ModificarFlagPoN(0);
+							PulsosNegativos();
+						 }
+
 		}
+
 		if(variable==2 && !(pulsado(BtnEnter)))
 		{
 			TemporizadorTimer0(500);
 			ResetTimer0();
+
 			if(tipo==1){tipo=0;}
 			else if(tipo==0){tipo=1;}
 			PosicionarCursor(2,2);
-			if(tipo==1) {printf_lcd("pulsos en mA    ");
+			if(tipo==1) {printf_lcd("Pulsos en mA    ");
 							ModificarFlagVoI(1);}
-			if(tipo==0) {printf_lcd("pulsos en V     ");
+			if(tipo==0) {printf_lcd("Pulsos en V     ");
 							ModificarFlagVoI(0);}
+		}
+
+		if(variable==1)
+		{
+			PosicionarCursor(1,1);
+			arrow();
+			PosicionarCursor(1,2);
+			printf_lcd(" ");
+		}
+
+
+		if(variable==2)
+		{
+			PosicionarCursor(1,1);
+			printf_lcd(" ");
+			PosicionarCursor(1,2);
+			arrow();
 		}
 
 	}
@@ -182,15 +254,15 @@ void Conf_Pulsos(uint8_t menuPosition)
 
 	    x=1;
 	    unidad=0;
+	    DesactivarCursor();
 	    ClearDisplay();
 }
 
 
 void Guardar_Pulsos()
 {
-	uint8_t dato= GuardarDato(dato_pulsos,2);
+	uint8_t dato= GuardarDato(dato_pulsos,2, DevolverNumPulsos());
 	ModificarNumPulsos(dato);
-
 }
 
 
@@ -198,7 +270,8 @@ void Conf_Amplitud(uint8_t menuPosition)
 {
 	inicializarPulsadores();
 	ClearDisplay();
-	//Conf_previa();
+	Conf_previa();
+	ClearDisplay();
 
 	PosicionarCursor(1,1);
 	printf_lcd(txSUBMENU[menuPosition-1]);
@@ -253,23 +326,49 @@ void Conf_Amplitud(uint8_t menuPosition)
 
 		    x=1;
 		    unidad=0;
+		    DesactivarCursor();
 		    ClearDisplay();
 }
 
 
 void Guardar_Amplitud()
 {
-	uint16_t dato= GuardarDato(dato_amplitud,3);
+	uint16_t amp=0;
+	if(DevolverFlagVoI()==1)
+	{
+		amp= (DevolverValueUp()*31)/1000;
+	}
+	if(DevolverFlagVoI()==0)
+	{
+		amp= (DevolverValueUp()*62)/1000;
+	}
+
+	uint16_t dato= GuardarDato(dato_amplitud,3,amp);
 	uint16_t aux1=0;
 	uint16_t aux2=0;
 	uint16_t aux3=0;
 	uint16_t dat=0;
-	aux1=dato*1000/31;//valor entero
-	aux2=dato*10000/31;//valor con el decimal
-	aux3=aux1*10;
-	aux3= aux2-aux3;//decimal
-	if(aux3>0){dat= aux1+1;}
-	else{dat=aux1;}
+	if(DevolverFlagVoI()==1)
+	{
+		if(dato>= 100)	{dato=100;}
+		aux1=dato*1000/31;//valor entero
+		aux2=dato*10000/31;//valor con el decimal
+		aux3=aux1*10;
+		aux3= aux2-aux3;//decimal
+		if(aux3>0){dat= aux1+1;}
+		else{dat=aux1;}
+	}
+	if(DevolverFlagVoI()==0)
+	{
+		if(dato>= 200)	{dato=200;}
+		aux1=dato*1000/62;//valor entero
+		aux2=dato*10000/62;//valor con el decimal
+		aux3=aux1*10;
+		aux3= aux2-aux3;//decimal
+		if(aux3>0){dat= aux1+1;}
+		else{dat=aux1;}
+
+	}
 
 	ModificarValueUp(dat);
 
@@ -293,7 +392,7 @@ void Conf_Periodo(uint8_t menuPosition)
 	dato_periodo[2] = 15;
 	dato_periodo[3] = 15;
 
-		x=1;
+	x=1;
 
 
 	while(!salir2)
@@ -337,12 +436,13 @@ void Conf_Periodo(uint8_t menuPosition)
 
 	    x=1;
 	    unidad=0;
+	    DesactivarCursor();
 	    ClearDisplay();
 }
 
 void Guardar_Periodo()
 {
-	uint16_t dato= GuardarDato(dato_periodo,4);
+	uint16_t dato= GuardarDato(dato_periodo,4,DevolverPeriodo());
 	ModificarPeriodo(dato);
 
 }
@@ -410,6 +510,7 @@ while(!salir2)
 
     x=1;
     unidad=0;
+    DesactivarCursor();
     ClearDisplay();
 
 
@@ -417,7 +518,7 @@ while(!salir2)
 
 void Guardar_TUp()
 {
-	uint16_t dato= GuardarDato(dato_talto,4);
+	uint16_t dato= GuardarDato(dato_talto,4, DevolverTimeUp());
 	ModificarTimeUp(dato);
 
 }
@@ -443,7 +544,6 @@ void OpenMenu()
 
 	while(!salir)
 	{
-		//key1=ReadPulsador();
 
 		if(!(pulsado(BtnUp)) && menuPosition-1 > 0)
 			{
@@ -484,7 +584,10 @@ void OpenMenu()
 			        	 if(flag4==1)
 			        	 { Guardar_Periodo();}
 			        	 ClearDisplay();
-
+			        	 //aseguro que periodo y tiempo en alto no sean iguales
+			        	 //ni periodo menor a tiempo en alto
+			        	 if( DevolverTimeUp()==DevolverPeriodo() || DevolverPeriodo()< DevolverTimeUp() )
+			        	 { ModificarPeriodo(DevolverTimeUp()+1);}
 			        	 	 salir = 1;
 			         	 	 DesactivarCursor();
 			         	 	 break; //Salir y guardar
@@ -518,7 +621,6 @@ void OpenMenu()
 							printf_lcd(" ");
 							PosicionarCursor(1,2);
 							arrow();
-							//printf_lcd("-");
 
 						}
 				}
@@ -532,7 +634,6 @@ void OpenMenu()
 						{
 							PosicionarCursor(1,1);
 							arrow();
-							//printf_lcd("-");
 							PosicionarCursor(1,2);
 							printf_lcd(" ");
 						}
@@ -542,7 +643,6 @@ void OpenMenu()
 							printf_lcd(" ");
 							PosicionarCursor(1,2);
 							arrow();
-							//printf_lcd("-");
 						}
 
 
@@ -557,7 +657,6 @@ void OpenMenu()
 						{
 							PosicionarCursor(1,1);
 							arrow();
-							//printf_lcd("-");
 							PosicionarCursor(1,2);
 							printf_lcd(" ");
 						}
@@ -567,7 +666,7 @@ void OpenMenu()
 							printf_lcd(" ");
 							PosicionarCursor(1,2);
 							arrow();
-							//printf_lcd("-");
+
 						}
 				}
 
@@ -579,5 +678,148 @@ void OpenMenu()
 	salir=0;
 	menuPosition = 1;
 	ClearDisplay();
+}
+
+VariarAmplitud()
+{
+	uint16_t value, value_aux;
+	value=DevolverValueUp();
+	static char auxVal[10];
+	static char auxValue[10];
+	uint16_t aux1=0;
+	uint16_t aux2=0;
+	uint16_t aux3=0;
+	uint16_t dat=0;
+	uint8_t exit=0;
+	ClearDisplay();
+	PosicionarCursor(1,1);
+	printf_lcd("Amplitud:       ");
+	PosicionarCursor(1,2);
+
+
+	if(DevolverFlagPoN()==1)
+	{
+		if(DevolverFlagVoI()==1)
+		{
+			value_aux=(value*31)/1000;
+		}
+		if(DevolverFlagVoI()==0)
+		{
+			value_aux=(value*62)/1000;
+		}
+	}
+	if(DevolverFlagPoN()==0)
+	{
+
+		if(DevolverFlagVoI()==1)
+		{
+			value_aux=(value*31)/1000;
+		}
+		if(DevolverFlagVoI()==0)
+		{
+			value_aux=(value*62)/1000;
+		}
+		printf_lcd("-");
+	}
+
+	lcd_putInt(value_aux);
+
+	if(DevolverFlagVoI()==1)
+		{
+			printf_lcd("mA  ");
+		}
+	if(DevolverFlagVoI()==0)
+		{
+			printf_lcd("V  ");
+		}
+
+
+	while(!exit)
+	{
+		if(!(pulsado(BtnUp)))
+		{
+			TemporizadorTimer0(300);
+			ResetTimer0();
+			value_aux++;
+			if(DevolverFlagVoI()==1 && value_aux>100)
+			{
+				value_aux=0;
+			}
+			if(DevolverFlagVoI()==0 && value_aux>200)
+			{
+				value_aux=0;
+			}
+		}
+
+
+		if(!(pulsado(BtnDown)))
+		{
+			TemporizadorTimer0(300);
+			ResetTimer0();
+
+			if(DevolverFlagVoI()==1 && value_aux==0)
+			{
+				value_aux=101; //después se le resta 1
+			}
+			if(DevolverFlagVoI()==0 && value_aux==0)
+			{
+				value_aux=201;
+			}
+			value_aux--;
+		}
+
+
+		if(!(pulsado(BtnEnter)))
+		{
+			TemporizadorTimer0(300);
+			ResetTimer0();
+			exit=1;
+		}
+
+		PosicionarCursor(1,2);
+
+		lcd_putInt(value_aux);
+
+		printf_lcd(" ");
+
+		if(DevolverFlagVoI()==1)
+				{
+					printf_lcd("mA  ");
+				}
+			if(DevolverFlagVoI()==0)
+				{
+					printf_lcd("V   ");
+				}
+
+
+	}
+
+//---------------------------------------------------------------------
+		if(DevolverFlagVoI()==1)
+		{
+			aux1=value_aux*1000/31;//valor entero
+			aux2=value_aux*10000/31;//valor con el decimal
+			aux3=aux1*10;
+			aux3= aux2-aux3;//decimal
+			if(aux3>0){dat= aux1+1;}
+			else{dat=aux1;}
+		}
+		if(DevolverFlagVoI()==0)
+		{
+			aux1=value_aux*1000/62;//valor entero
+			aux2=value_aux*10000/62;//valor con el decimal
+			aux3=aux1*10;
+			aux3= aux2-aux3;//decimal
+			if(aux3>0){dat= aux1+1;}
+			else{dat=aux1;}
+
+		}
+//------------------------------------------------------------------
+
+	ModificarValueUp(dat);
+
+	ClearDisplay();
+
+
 }
 

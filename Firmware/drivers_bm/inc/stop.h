@@ -22,6 +22,8 @@
 void InicializarStop(void);
 uint8_t ReadStop(void);
 void CambiarEstado(void);
+void ActivarPin(void);
+void DesactivarPin(void);
 
 
 

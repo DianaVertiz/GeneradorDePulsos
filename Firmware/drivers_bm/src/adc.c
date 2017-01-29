@@ -67,57 +67,6 @@ void Leer_valor_adc(void)
 
 }
 
-/*void interrupcionADC0(void)
-{
-	uint16_t dataADC;
-	/* Interrupt mode: Call the stream interrupt handler
-	NVIC_DisableIRQ(_LPC_ADC_IRQ);
-	Chip_ADC_Int_SetChannelCmd(LPC_ADC0, ADC_CH1, DISABLE);
-	Chip_ADC_ReadValue(LPC_ADC0, ADC_CH1, &dataADC);
-	ADC_Interrupt_Done_Flag = 1;
-	App_print_ADC_value(dataADC);
 
-	if (DEBUGIN() != 'x') {
-		NVIC_EnableIRQ(_LPC_ADC_IRQ);
-		Chip_ADC_Int_SetChannelCmd(LPC_ADC0, ADC_CH1, ENABLE);
-	}
-	else {Interrupt_Continue_Flag = 0; }
-}*/
-
-/*
-
-// Polling routine for ADC example
-static void App_Polling_Test(void)
-{
-	uint16_t dataADC;
-
-	// Select using burst mode or not
-	if (Burst_Mode_Flag) {
-		Chip_ADC_SetBurstCmd(_LPC_ADC_ID, ENABLE);
-	}
-	else {
-		Chip_ADC_SetBurstCmd(_LPC_ADC_ID, DISABLE);
-	}
-
-	// Get  adc value until get 'x' character
-	while (DEBUGIN() != 'x') {
-		// Start A/D conversion if not using burst mode
-		if (!Burst_Mode_Flag) {
-			Chip_ADC_SetStartMode(_LPC_ADC_ID, ADC_START_NOW, ADC_TRIGGERMODE_RISING);
-		}
-		// Waiting for A/D conversion complete
-		while (Chip_ADC_ReadStatus(_LPC_ADC_ID, _ADC_CHANNLE, ADC_DR_DONE_STAT) != SET) {}
-		/* Read ADC value
-		Chip_ADC_ReadValue(_LPC_ADC_ID, _ADC_CHANNLE, &dataADC);
-		/* Print ADC value
-		App_print_ADC_value(dataADC);
-	}
-
-	/* Disable burst mode, if any
-	if (Burst_Mode_Flag) {
-		Chip_ADC_SetBurstCmd(_LPC_ADC_ID, DISABLE);
-	}
-}
-}*/
 
 

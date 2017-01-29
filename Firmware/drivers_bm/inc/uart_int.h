@@ -16,7 +16,6 @@ uint32_t BaudRate = 115200;
 #define UART_RRB_SIZE 32	/* Receive */
 #define UART2_IRQn 26
 
-//const char inst1[] = "Presione C para configurar los pulsos\r\npresione E para los pulsos por defecto\r\n";
 
 void IniciarUart(void);
 void IniciarInt(void);
@@ -30,6 +29,7 @@ uint16_t Escalado(uint16_t);
 void LeeArray(char*);
 void EnviarMensaje(char*, uint8_t);
 void Escribir_dato(uint8_t);
+void WriteInt(uint16_t);
 char* itoa(uint16_t, char*, uint16_t);
 char* itoa2(uint32_t, uint8_t);
 

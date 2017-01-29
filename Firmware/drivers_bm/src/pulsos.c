@@ -75,9 +75,7 @@ void GenerarPulsos()
 {
 	uint16_t pulsos =0;
 	uint16_t valor;
-	//if(VALUE_UP<=5){valor=0;}
-	//else{valor=VALUE_UP-5;}
-	//value_up=(valor*1023)/VCC;
+
 	value_up=(VALUE_UP*1023)/VCC;
 	value_down=(VALUE_DOWN*1023)/VCC;
 	TIMER_DOWN=PERIODO-TIMER_UP;

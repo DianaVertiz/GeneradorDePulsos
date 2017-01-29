@@ -84,16 +84,29 @@ void UART2_IRQHandler()
 
 void TIMER2_IRQHandler()
 {
-	if (Chip_TIMER_MatchPending(LPC_TIMER2, 2))
+	uint8_t var=0;
+	MensajeScroll();
+	while (Chip_TIMER_MatchPending(LPC_TIMER2, 2))
 		{
-			ClearDisplay();
+			var=Leer_intUART();
+			EncenderLeds(4);
+			if(!(pulsado(BtnRight)) || var=='r') //STOP
 
-			MostrarPulsos(DevolverNumPulsos(),DevolverValueUp(),DevolverTimeUp(),DevolverPeriodo(),DevolverFlagVoI(),DevolverFlagPoN());
+			{
+				TemporizadorTimer0(500);
+				ResetTimer0();
 
-			Chip_TIMER_ClearMatch(LPC_TIMER2, 2);
+				Chip_TIMER_ClearMatch(LPC_TIMER2, 2);
+				FinInterrupt2();
+
+			}
+
 
 		}
-	//FinTimer2_MatchInt();
+	DesactivarPin();
+	var=0;
+	MostrarPulsos(DevolverNumPulsos(),DevolverValueUp(),DevolverTimeUp(),DevolverPeriodo(),DevolverFlagVoI(),DevolverFlagPoN());
+	ApagarLeds(4);
 }
 
 
@@ -119,51 +132,50 @@ int main(void)
 	MostrarPulsos(DevolverNumPulsos(),DevolverValueUp(),DevolverTimeUp(),DevolverPeriodo(),DevolverFlagVoI(),DevolverFlagPoN());
 	InicializarSigno();
 	InicializarStop();
-	//InitTimer2_MatchInterrupt(800);
+
+	WriteN();
+
+
 	while(1)
 	{
 
 		caracter=Leer_intUART();
 
-		if(!(pulsado(BtnEnter))) //Abre el menu
-		{
-			//FinInterrupt2();
-
-			TemporizadorTimer0(500);
-			ResetTimer0();
-			OpenMenu();
-			//InitInterrupt2();
-			MostrarPulsos(DevolverNumPulsos(),DevolverValueUp(),DevolverTimeUp(),DevolverPeriodo(),DevolverFlagVoI(),DevolverFlagPoN());
-		}
-
-		if(!(pulsado(BtnLeft))) //Estimula
-
-		{	//FinInterrupt2();
-			GenerarPulsos();
-			//InitInterrupt2();
-		}
-
 		if(!(pulsado(BtnRight))) //STOP
 
 		{
-			//FinInterrupt2();
-			TemporizadorTimer0(1000);
+			TemporizadorTimer0(500);
 			ResetTimer0();
-
-			CambiarEstado();
-
-			if(ReadStop())
-			{
-				MensajeScroll();
-			}
-			else
-			{
-				MostrarPulsos(DevolverNumPulsos(),DevolverValueUp(),DevolverTimeUp(),DevolverPeriodo(),DevolverFlagVoI(),DevolverFlagPoN());
-			}
-
-		  //InitInterrupt2();
+			ActivarPin();
+			InitTimer2_MatchInterrupt(10);
 
 		}
+
+		if(!(pulsado(BtnEnter))) //Abre el menu
+		{
+			TemporizadorTimer0(500);
+			ResetTimer0();
+			OpenMenu();
+
+			MostrarPulsos(DevolverNumPulsos(),DevolverValueUp(),DevolverTimeUp(),DevolverPeriodo(),DevolverFlagVoI(),DevolverFlagPoN());
+			WriteN();
+		}
+
+		if(!(pulsado(BtnLeft))) //Envía tren de pulsos
+		{	TemporizadorTimer0(500);
+			ResetTimer0();
+			GenerarPulsos();
+		}
+
+		if(!(pulsado(BtnUp))) //configuración rápida de la amplitud
+		{
+			TemporizadorTimer0(500);
+			ResetTimer0();
+			VariarAmplitud();
+			MostrarPulsos(DevolverNumPulsos(),DevolverValueUp(),DevolverTimeUp(),DevolverPeriodo(),DevolverFlagVoI(),DevolverFlagPoN());
+			WriteN();
+		}
+
 
 
 		switch(caracter)
@@ -219,16 +231,8 @@ int main(void)
     	        	break;
 
     	    case 'r':
-    	    		CambiarEstado();
-	    			if(ReadStop())
-    	    		{
-    	    			MensajeScroll();
-    	    		}
-    	    		else
-    	    		{
-    	    			MostrarPulsos(DevolverNumPulsos(),DevolverValueUp(),DevolverTimeUp(),DevolverPeriodo(),DevolverFlagVoI(),DevolverFlagPoN());
-    	    		}
-
+    	    		ActivarPin();
+    	    		InitTimer2_MatchInterrupt(10);
     	    		break;
     	}
 

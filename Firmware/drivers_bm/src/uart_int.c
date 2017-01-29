@@ -148,6 +148,17 @@ void Escribir_dato(uint8_t dato)
 	Chip_UART_SendByte(LPC_USART2, dato);
 }
 
+void WriteInt(uint16_t N)
+{
+	static char auxN[10];
+	itoa(N,auxN,10);
+	char* strN=auxN;
+	while(*strN != 0)
+	{
+		uartWriteByte(*strN);
+		strN++;
+	}
+}
 
 void FinInt()
 {

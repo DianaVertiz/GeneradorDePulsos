@@ -17,7 +17,7 @@
 
 
 uint16_t N_PULSOS=5; //n
-uint16_t VALUE_UP=33;//u  voltaje o corriente
+uint16_t VALUE_UP=1024;//u  voltaje o corriente
 uint16_t  TIMER_UP=1000; //t  tiempo en ms
 uint16_t  PERIODO=3000; //p
 uint16_t VALUE_DOWN=0;

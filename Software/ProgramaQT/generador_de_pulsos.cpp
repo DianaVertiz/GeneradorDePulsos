@@ -17,6 +17,8 @@ Generador_de_pulsos::Generador_de_pulsos(QWidget *parent) :
 {
     ui->setupUi(this);
     Serial = new QSerialPort(this);
+    serialBuffer = "";
+
     foreach (QSerialPortInfo port, QSerialPortInfo::availablePorts()) {
         ui->ListaPuertos->addItem(port.portName());
         ui->ListaPuertos_2->addItem(port.portName());
@@ -24,34 +26,11 @@ Generador_de_pulsos::Generador_de_pulsos(QWidget *parent) :
 
 }
 
-void Generador_de_pulsos::ConfInicio()
+Generador_de_pulsos::~Generador_de_pulsos()
 {
-    configurarVoI();
-    configurarPoN();
-    on_NPulsos();
-    ConfPulsos();
-    on_ValueUp();
-
-   if(flagVoI==1)
-   {
-        ConfValUp();
-   }
-   if(flagVoI==0)
-   {
-        ConfValUp_tension();
-   }
-
-   on_Tup();
-   ConfTup();
-   on_Periodo();
-   ConfPeriodo();
-
+    Serial->close();
+    delete ui;
 }
-
-/*void Generador_de_pulsos::readEduciaa()
-{
-
-}*/
 
 
 void Generador_de_pulsos::on_radioButton_clicked()
@@ -89,7 +68,9 @@ void Generador_de_pulsos::on_radioButton_clicked()
         Serial->setFlowControl(QSerialPort::NoFlowControl);
         stateport = 2;
         ConfInicio();
-        //connect(Serial,SIGNAL(readyRead()),this,SLOT(readEduciaa()));
+        connect(Serial,SIGNAL(readyRead()),this,SLOT(readEduciaa()));
+
+
       }
     }
     else if( stateport==1 )
@@ -170,12 +151,89 @@ void Generador_de_pulsos::recibir_comVirtual()
 
 }
 
-
-Generador_de_pulsos::~Generador_de_pulsos()
+void Generador_de_pulsos::ConfInicio()
 {
-    Serial->close();
-    delete ui;
+    configurarVoI();
+    configurarPoN();
+    on_NPulsos();
+    ConfPulsos();
+    on_ValueUp();
+
+   if(flagVoI==1)
+   {
+        ConfValUp();
+   }
+   if(flagVoI==0)
+   {
+        ConfValUp_tension();
+   }
+
+   on_Tup();
+   ConfTup();
+   on_Periodo();
+   ConfPeriodo();
+
 }
+
+void Generador_de_pulsos::readEduciaa()
+{
+    serialData= Serial->readAll();
+    serialBuffer += QString::fromStdString(serialData.toStdString());
+    qDebug()<< serialBuffer<<"\n";
+
+    QStringList buffer_split = serialBuffer.split(",");
+    qDebug() << buffer_split;
+
+    ui->ValueN->setValue((buffer_split[0]).toInt());
+
+
+
+    qreal a=0;
+    int b=0;
+
+    a= 100*((buffer_split[1]).toInt()) + ((buffer_split[2]).toInt());
+
+    if((buffer_split[7]).toInt() == 1)
+    {
+        flagVoI=1;
+        ui->SalidaVoI->setCurrentIndex(0);
+        ui->doubleSpinBox->setSuffix(" mA");
+        b= qFloor((31*a)/1000);
+    }
+    if((buffer_split[7]).toInt() == 0)
+    {
+        flagVoI=0;
+        ui->SalidaVoI->setCurrentIndex(1);
+        ui->doubleSpinBox->setSuffix(" V");
+        b= qFloor((62*a)/1000);
+    }
+
+
+    if((buffer_split[8]).toInt() == 1)
+    {
+        flagPoN=1;
+        ui->SalidaPoN->setCurrentIndex(0);
+        ui->doubleSpinBox->setPrefix("");
+    }
+    if((buffer_split[8]).toInt() == 0)
+    {
+        flagPoN=0;
+        ui->SalidaPoN->setCurrentIndex(1);
+        ui->doubleSpinBox->setPrefix("-");
+    }
+
+    ui->doubleSpinBox->setValue(b);
+
+    ui->ValueT->setValue(100*((buffer_split[3]).toInt()) + ((buffer_split[4]).toInt()));
+
+    ui->ValueP->setValue(100*((buffer_split[5]).toInt()) + ((buffer_split[6]).toInt()));
+
+    serialBuffer = "";
+    serialData.clear();
+
+
+}
+
 
 void Generador_de_pulsos::on_NPulsos()
 {
@@ -212,7 +270,7 @@ void Generador_de_pulsos::ConfPulsos()
     QByteArray outbyte;
     char x = (char)value;
     outbyte.append(x); //agrega el caracter al arreglo outbyte
-    qDebug()<<"r: "<<outbyte.data();
+    //qDebug()<<"r: "<<outbyte.data();
     //envía el valor configurado
     Serial->write(outbyte);
     Serial->waitForBytesWritten(10);
@@ -231,8 +289,8 @@ void Generador_de_pulsos::ConfTup()
     y = (char)b;
     outbyte1.append(x); //agrega el caracter al arreglo outbyte
     outbyte2.append(y);
-    qDebug()<<"r: "<<outbyte1.data();
-    qDebug()<<"r: "<<outbyte2.data();
+    //qDebug()<<"r: "<<outbyte1.data();
+    //qDebug()<<"r: "<<outbyte2.data();
     //envía el valor configurado
     Serial->write(outbyte1);
     // Serial->waitForBytesWritten(10);
@@ -254,8 +312,8 @@ void Generador_de_pulsos::ConfPeriodo()
     y = (char)b;
     outbyte1.append(x); //agrega el caracter al arreglo outbyte
     outbyte2.append(y);
-    qDebug()<<"r: "<<'0' + outbyte1.data();
-    qDebug()<<"r: "<<outbyte2.data();
+    //qDebug()<<"r: "<<'0' + outbyte1.data();
+    //qDebug()<<"r: "<<outbyte2.data();
     //envía el valor configurado
     Serial->write(outbyte1);
     // Serial->waitForBytesWritten(10);
@@ -294,8 +352,8 @@ void Generador_de_pulsos::ConfValUp()
     char y = (char)b;
     outbyte1.append(x); //agrega el caracter al arreglo outbyte
     outbyte2.append(y);
-    qDebug()<<"r: "<<outbyte1.data();
-    qDebug()<<"r: "<<outbyte2.data();
+    //qDebug()<<"r: "<<outbyte1.data();
+    //qDebug()<<"r: "<<outbyte2.data();
     //envía el valor configurado
     Serial->write(outbyte1);
    // Serial->waitForBytesWritten(10);
@@ -332,8 +390,8 @@ void Generador_de_pulsos::ConfValUp_tension()
     char y = (char)b;
     outbyte1.append(x); //agrega el caracter al arreglo outbyte
     outbyte2.append(y);
-    qDebug()<<"r: "<<outbyte1.data();
-    qDebug()<<"r: "<<outbyte2.data();
+    //qDebug()<<"r: "<<outbyte1.data();
+    //qDebug()<<"r: "<<outbyte2.data();
     //envía el valor configurado
     Serial->write(outbyte1);
     // Serial->waitForBytesWritten(10);
@@ -358,9 +416,7 @@ void Generador_de_pulsos::on_ValoresDefault_clicked()
     ui->ValueT->setValue(1);
     ui->ValueP->setValue(5);
     //ui->doubleSpinBox->setValue(1);
-    char letra2;
-    letra2 = 'r';
-    Serial->putChar(letra2);
+
 }
 
 void Generador_de_pulsos::on_Stop_clicked()
@@ -688,4 +744,6 @@ void Generador_de_pulsos::on_ValueP_valueChanged(int arg1)
     on_Periodo();
     ConfPeriodo();
 }
+
+
 

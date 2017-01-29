@@ -18,6 +18,8 @@ void inicializarPulsadores()
 	GPIO_Set_Dir( GPIO3 , INPUT);
 	GPIO_Set_Dir( GPIO4 , INPUT);
 	GPIO_Set_Dir( GPIO6 , INPUT);
+
+
 }
 
 uint8_t pulsado(uint8_t pulsador) //se fija si se pulsó o no un GPIO
@@ -67,18 +69,11 @@ uint8_t ReadPulsador() //devuele la tecla pulsada
 		ResetTimer0();
 	}
 
-	//else
-	//{
-		//key=-1;
-	//}
-
-
 	return key;
 }
 
 void DetenerEstimulador()
 {
-
 	GPIO_Write(GPIO6, 1);
 }
 

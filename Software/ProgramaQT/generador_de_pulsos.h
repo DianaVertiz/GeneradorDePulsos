@@ -20,11 +20,11 @@ public:
     ~Generador_de_pulsos();
 
 private slots:
-    void recibir_comVirtual();
+
 
     void ConfInicio();
 
-   // void readEduciaa();
+   void readEduciaa();
 
     void on_NPulsos();
 
@@ -110,10 +110,16 @@ private slots:
 
     void on_radioButton_2_clicked();
 
+    void recibir_comVirtual();
+
+
 private:
+
     Ui::Generador_de_pulsos *ui;
     int flagVoI=1; //1 en modo corriente
     int flagPoN=1; //1 pulsos positivos
+    QByteArray serialData;
+    QString serialBuffer;
 };
 
 #endif // GENERADOR_DE_PULSOS_H

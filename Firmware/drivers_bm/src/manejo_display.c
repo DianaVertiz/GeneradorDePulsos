@@ -25,25 +25,13 @@ LCD_DATA_Type data;
 void MostrarPulsos(uint16_t N,uint16_t V,uint16_t Tup,uint16_t P,uint8_t flagVoI,uint8_t flagPoN)
 {
 	ClearDisplay();
-	static char auxN[10];
-	static char auxV[10];
-	static char auxT[10];
-	static char auxP[10];
-	uint16_t Vaux;
-	//uint16_t Iaux;
 
-	//lcd_init_port();
-	//lcd_init();
+	uint16_t Vaux;
+
 	lcd_gotoxy(1,1);
 	printf_lcd("N:");
 
-	itoa(N,auxN,10);
-	char* strN=auxN;
-	while(*strN != 0)
-	{
-		  lcd_putc(*strN);
-		  strN++;
-	}
+	lcd_putInt(N);
 
 	lcd_gotoxy(6,1);
 
@@ -77,15 +65,7 @@ if(flagPoN==0)
 }
 
 
-	itoa(Vaux,auxV,10);
-		char* strV=auxV;
-		while(*strV != 0)
-		{
-			  lcd_putc(*strV);
-			  strV++;
-		}
-
-		//lcd_gotoxy(10,1);
+	lcd_putInt(Vaux);
 
 	if(flagVoI==1)
 	{
@@ -100,24 +80,12 @@ if(flagPoN==0)
 	lcd_gotoxy(1,2);
 	printf_lcd("T:");
 
-		itoa(Tup,auxT,10);
-		char* strT=auxT;
-		while(*strT != 0)
-		{
-			  lcd_putc(*strT);
-			  strT++;
-		}
-	//printf_lcd("ms");
+	lcd_putInt(Tup);
+
 	lcd_gotoxy(8,2);
 	printf_lcd("P:");
 
-				itoa(P,auxP,10);
-				char* strP=auxP;
-				while(*strP != 0)
-				{
-					  lcd_putc(*strP);
-					  strP++;
-				}
+	lcd_putInt(P);
 	printf_lcd("ms");
 
 	//RetornoCasa();
@@ -127,19 +95,12 @@ if(flagPoN==0)
 
 void MostrarNumPulsos(uint16_t N)
 {
-	static char auxN[10];
 	lcd_gotoxy(1,1);
 	printf_lcd("     ");
 	lcd_gotoxy(1,1);
 	printf_lcd("N:");
 
-	itoa(N,auxN,10);
-	char* strN=auxN;
-	while(*strN != 0)
-	{
-		  lcd_putc(*strN);
-		  strN++;
-	}
+	lcd_putInt(N);
 }
 void MostrarAmplitud(uint16_t V,uint8_t flagVoI,uint8_t flagPoN)
 {
@@ -178,15 +139,9 @@ void MostrarAmplitud(uint16_t V,uint8_t flagVoI,uint8_t flagPoN)
 	}
 
 
-		itoa(Vaux,auxV,10);
-			char* strV=auxV;
-			while(*strV != 0)
-			{
-				  lcd_putc(*strV);
-				  strV++;
-			}
+		lcd_putInt(Vaux);
 
-			//lcd_gotoxy(10,1);
+
 
 		if(flagVoI==1)
 		{
@@ -207,14 +162,7 @@ void MostrarTUp(uint16_t Tup)
 	lcd_gotoxy(1,2);
 	printf_lcd("T:");
 
-	itoa(Tup,auxT,10);
-	char* strT=auxT;
-	while(*strT != 0)
-	{
-	  lcd_putc(*strT);
-	  strT++;
-	}
-	//printf_lcd("ms");
+	lcd_putInt(Tup);
 }
 void MostrarPeriodo(uint16_t P)
 {
@@ -224,13 +172,7 @@ void MostrarPeriodo(uint16_t P)
 	lcd_gotoxy(8,2);
 	printf_lcd("P:");
 
-	itoa(P,auxP,10);
-	char* strP=auxP;
-	while(*strP != 0)
-	{
-	  lcd_putc(*strP);
-	  strP++;
-	}
+	lcd_putInt(P);
 	printf_lcd("ms");
 
 }
@@ -419,54 +361,12 @@ void ClearDisplay()
 		delay();
 }
 
-void ModificarParametro(uint8_t flagVoI,uint8_t flagPoN)
+
+//Función que sirve para escribir un entero en el display
+
+void lcd_putInt(uint16_t i)
 {
-	uint8_t parametro= ProbarPulsadores();
-
-	switch(parametro)
-		{
-		case 1:	ClearDisplay();
-				PosicionarCursor(1,1);
-				ActivarCursor();
-				printf_lcd("Nro de Pulsos:");
-				PosicionarCursor(1,2);
-				break;
-		case 2:	ClearDisplay();
-				PosicionarCursor(1,1);
-				ActivarCursor();
-					if(flagVoI==1)
-					{
-						printf_lcd("Amplitud_I:");
-					}
-					if(flagVoI==0)
-					{
-						printf_lcd("Amplitud_V:");
-					}
-				PosicionarCursor(1,2);
-				if(flagPoN==0){	printf_lcd("-");}
-				if(flagPoN==1){ printf_lcd("");}
-				break;
-		case 3: ClearDisplay();
-				PosicionarCursor(1,1);
-				ActivarCursor();
-				printf_lcd("Tiempo en alto:");
-				PosicionarCursor(1,2);
-				break;
-		case 4: ClearDisplay();
-				PosicionarCursor(1,1);
-				ActivarCursor();
-				printf_lcd("Periodo:");
-				PosicionarCursor(1,2);
-				break;
-		}
-
-
-}
-
-//permite enviar un dígito entero al display
-void lcd_putInt(uint8_t i)
-{
-	static char N[2];
+	static char N[10];
 	itoa(i,N,10);
 	char* aux=N;
 	while(*aux!=0)
@@ -563,5 +463,7 @@ void MensajeScroll()
 
 	//ClearDisplay();
 }
+
+
 
 

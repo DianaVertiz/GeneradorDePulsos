@@ -66,7 +66,8 @@ void Conf_TUp(uint8_t);
 void Guardar_TUp(void);
 void Conf_Periodo(uint8_t);
 void Guardar_Periodo(void);
-uint16_t GuardarDato(uint8_t*, uint8_t);
+uint16_t GuardarDato(uint8_t*, uint8_t, uint16_t);
+void VariarAmplitud(void);
 
 
 
