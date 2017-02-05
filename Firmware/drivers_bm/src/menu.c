@@ -84,7 +84,7 @@ uint16_t GuardarDato(uint8_t* variable, uint8_t tamanio, uint16_t var)
 return dato_guardado;
 
 
-}
+ }
 
 void Conf_previa()
 {
@@ -210,30 +210,83 @@ void Conf_Pulsos(uint8_t menuPosition)
 	dato_pulsos[1] = 15;
 
 	x=1;
-
+	unidad1=0;
+	unidad2=0;
 
 	while(!salir2)
 	{
 
-			if(!(pulsado(BtnDown)))
+			if(!(pulsado(BtnRight)))
 			{
 				TemporizadorTimer0(500);
 				ResetTimer0();
 				x++;
 				if(x>2){x=2;}
-				unidad=0;
+
 			}
+
+			if(!(pulsado(BtnLeft)))
+			{
+				TemporizadorTimer0(500);
+				ResetTimer0();
+				x--;
+				if(x<1){x=1;}
+
+			}
+
 
 			if(!(pulsado(BtnUp)))
 			{
 				TemporizadorTimer0(500);
 				ResetTimer0();
-				lcd_putInt(unidad);
-				dato_pulsos[2-x]=unidad;
-				unidad++;
-				if(unidad>9){unidad=0;}
+
+				switch(x)
+				{
+				case 1: lcd_putInt(unidad1);
+						if(unidad1>9){unidad1=0;}
+						dato_pulsos[2-x]=unidad1;
+						//unidad=unidad1;
+						unidad1++;
+						if(unidad1>9){unidad1=0;}
+						//unidad1=unidad;
+						break;
+				case 2: lcd_putInt(unidad2);
+						if(unidad2>9){unidad2=0;}
+						dato_pulsos[2-x]=unidad2;
+
+						unidad2++;
+						if(unidad2>9){unidad2=0;}
+						//unidad2=unidad;
+						break;
+				}
 
 			}
+
+			if(!(pulsado(BtnDown)))
+			{
+				TemporizadorTimer0(500);
+				ResetTimer0();
+
+				switch(x)
+				{
+				case 1: if(unidad1==0)
+						{unidad1=9;}
+						else
+						{unidad1--;}
+						lcd_putInt(unidad1);
+						dato_pulsos[2-x]=unidad1;
+						break;
+				case 2: if(unidad2==0)
+						{unidad2=9;}
+						else
+						{unidad2--;}
+						lcd_putInt(unidad2);
+						dato_pulsos[2-x]=unidad2;
+						break;
+				}
+
+			}
+
 
 			if(!(pulsado(BtnEnter)))
 			{
@@ -285,17 +338,29 @@ void Conf_Amplitud(uint8_t menuPosition)
 	dato_amplitud[2] = 15;
 
 	x=1;
+	unidad1=0;
+	unidad2=0;
+	unidad3=0;
 
 	while(!salir2)
 	{
 
-			if(!(pulsado(BtnDown)))
+
+			if(!(pulsado(BtnRight)))
 			{
 				TemporizadorTimer0(500);
 				ResetTimer0();
 				x++;
 				if(x>3){x=3;}
-				unidad=0;
+
+			}
+
+			if(!(pulsado(BtnLeft)))
+			{
+				TemporizadorTimer0(500);
+				ResetTimer0();
+				x--;
+				if(x<1){x=1;}
 
 			}
 
@@ -303,12 +368,71 @@ void Conf_Amplitud(uint8_t menuPosition)
 			{
 				TemporizadorTimer0(500);
 				ResetTimer0();
-				lcd_putInt(unidad);
-				dato_amplitud[3-x]=unidad;
-				unidad++;
-				if(unidad>9){unidad=0;}
+
+				switch(x)
+				{
+				case 1: lcd_putInt(unidad1);
+						if(unidad1>9){unidad1=0;}
+						dato_amplitud[3-x]=unidad1;
+						//unidad=unidad1;
+						unidad1++;
+						if(unidad1>9){unidad1=0;}
+						//unidad1=unidad;
+						break;
+				case 2: lcd_putInt(unidad2);
+						if(unidad2>9){unidad2=0;}
+						dato_amplitud[3-x]=unidad2;
+
+						unidad2++;
+						if(unidad2>9){unidad2=0;}
+						//unidad2=unidad;
+						break;
+				case 3: lcd_putInt(unidad3);
+						if(unidad3>9){unidad3=0;}
+						dato_amplitud[3-x]=unidad3;
+
+						unidad3++;
+						if(unidad3>9){unidad3=0;}
+						//unidad2=unidad;
+						break;
+
+
+				}
 
 			}
+
+			if(!(pulsado(BtnDown)))
+			{
+				TemporizadorTimer0(500);
+				ResetTimer0();
+
+				switch(x)
+				{
+				case 1: if(unidad1==0)
+						{unidad1=9;}
+						else
+						{unidad1--;}
+						lcd_putInt(unidad1);
+						dato_amplitud[3-x]=unidad1;
+						break;
+				case 2: if(unidad2==0)
+						{unidad2=9;}
+						else
+						{unidad2--;}
+						lcd_putInt(unidad2);
+						dato_amplitud[3-x]=unidad2;
+						break;
+				case 3: if(unidad3==0)
+						{unidad3=9;}
+						else
+						{unidad3--;}
+						lcd_putInt(unidad3);
+						dato_amplitud[3-x]=unidad3;
+						break;
+				}
+
+			}
+
 
 			if(!(pulsado(BtnEnter)))
 			{
@@ -344,30 +468,24 @@ void Guardar_Amplitud()
 	}
 
 	uint16_t dato= GuardarDato(dato_amplitud,3,amp);
-	uint16_t aux1=0;
-	uint16_t aux2=0;
-	uint16_t aux3=0;
+	uint32_t aux1=0;
+	uint32_t aux2=0;
 	uint16_t dat=0;
 	if(DevolverFlagVoI()==1)
 	{
+		// For upper value of x/y, use this ( x + y - 1 ) / y
 		if(dato>= 100)	{dato=100;}
-		aux1=dato*1000/31;//valor entero
-		aux2=dato*10000/31;//valor con el decimal
-		aux3=aux1*10;
-		aux3= aux2-aux3;//decimal
-		if(aux3>0){dat= aux1+1;}
-		else{dat=aux1;}
+		aux1=dato*1000; //value x
+		aux2= aux1 + 31; //x+y
+		dat= (aux2-1)/31;
+
 	}
 	if(DevolverFlagVoI()==0)
 	{
 		if(dato>= 200)	{dato=200;}
-		aux1=dato*1000/62;//valor entero
-		aux2=dato*10000/62;//valor con el decimal
-		aux3=aux1*10;
-		aux3= aux2-aux3;//decimal
-		if(aux3>0){dat= aux1+1;}
-		else{dat=aux1;}
-
+		aux1=dato*1000; //value x
+		aux2= aux1 + 62; //x+y
+		dat=(aux2-1)/62;
 	}
 
 	ModificarValueUp(dat);
@@ -393,31 +511,106 @@ void Conf_Periodo(uint8_t menuPosition)
 	dato_periodo[3] = 15;
 
 	x=1;
-
+	unidad1=0;
+	unidad2=0;
+	unidad3=0;
+	unidad4=0;
 
 	while(!salir2)
 	{
 
-			if(!(pulsado(BtnDown)))
+		if(!(pulsado(BtnRight)))
+		{
+			TemporizadorTimer0(500);
+			ResetTimer0();
+			x++;
+			if(x>4){x=4;}
+
+		}
+
+		if(!(pulsado(BtnLeft)))
+		{
+			TemporizadorTimer0(500);
+			ResetTimer0();
+			x--;
+			if(x<1){x=1;}
+
+		}
+
+		if(!(pulsado(BtnUp)))
+		{
+			TemporizadorTimer0(500);
+			ResetTimer0();
+
+			switch(x)
 			{
-				TemporizadorTimer0(500);
-				ResetTimer0();
-				x++;
-				if(x>4){x=4;}
-				unidad=0;
+			case 1: lcd_putInt(unidad1);
+					if(unidad1>9){unidad1=0;}
+					dato_periodo[4-x]=unidad1;
+					unidad1++;
+					if(unidad1>9){unidad1=0;}
+					break;
+			case 2: lcd_putInt(unidad2);
+					if(unidad2>9){unidad2=0;}
+					dato_periodo[4-x]=unidad2;
+					unidad2++;
+					if(unidad2>9){unidad2=0;}
+					break;
+			case 3: lcd_putInt(unidad3);
+					if(unidad3>9){unidad3=0;}
+					dato_periodo[4-x]=unidad3;
+					unidad3++;
+					if(unidad3>9){unidad3=0;}
+					break;
+			case 4: lcd_putInt(unidad4);
+					if(unidad4>9){unidad4=0;}
+					dato_periodo[4-x]=unidad4;
+					unidad4++;
+					if(unidad4>9){unidad4=0;}
+					break;
 
 			}
 
-			if(!(pulsado(BtnUp)))
-			{
-				TemporizadorTimer0(500);
-				ResetTimer0();
-				lcd_putInt(unidad);
-				dato_periodo[4-x]=unidad;
-				unidad++;
-				if(unidad>9){unidad=0;}
+		}
 
+		if(!(pulsado(BtnDown)))
+		{
+			TemporizadorTimer0(500);
+			ResetTimer0();
+
+			switch(x)
+			{
+			case 1: if(unidad1==0)
+					{unidad1=9;}
+					else
+					{unidad1--;}
+					lcd_putInt(unidad1);
+					dato_periodo[4-x]=unidad1;
+					break;
+			case 2: if(unidad2==0)
+					{unidad2=9;}
+					else
+					{unidad2--;}
+					lcd_putInt(unidad2);
+					dato_periodo[4-x]=unidad2;
+					break;
+			case 3: if(unidad3==0)
+					{unidad3=9;}
+					else
+					{unidad3--;}
+					lcd_putInt(unidad3);
+					dato_periodo[4-x]=unidad3;
+					break;
+			case 4: if(unidad4==0)
+					{unidad4=9;}
+					else
+					{unidad4--;}
+					lcd_putInt(unidad4);
+					dato_periodo[4-x]=unidad4;
+					break;
 			}
+
+		}
 
 			if(!(pulsado(BtnEnter)))
 			{
@@ -467,31 +660,109 @@ void Conf_TUp(uint8_t menuPosition)
 	dato_talto[3] = 15;
 
 	x=1;
+	unidad1=0;
+	unidad2=0;
+	unidad3=0;
+	unidad4=0;
 
 
 while(!salir2)
 {
 
-		if(!(pulsado(BtnDown)))
+	if(!(pulsado(BtnRight)))
+	{
+		TemporizadorTimer0(500);
+		ResetTimer0();
+		x++;
+		if(x>4){x=4;}
+
+	}
+
+	if(!(pulsado(BtnLeft)))
+	{
+		TemporizadorTimer0(500);
+		ResetTimer0();
+		x--;
+		if(x<1){x=1;}
+
+	}
+
+	if(!(pulsado(BtnUp)))
+	{
+		TemporizadorTimer0(500);
+		ResetTimer0();
+
+		switch(x)
 		{
-			TemporizadorTimer0(500);
-			ResetTimer0();
-			x++;
-			if(x>4){x=4;}
-			unidad=0;
+		case 1: lcd_putInt(unidad1);
+				if(unidad1>9){unidad1=0;}
+				dato_talto[4-x]=unidad1;
+				unidad1++;
+				if(unidad1>9){unidad1=0;}
+				break;
+		case 2: lcd_putInt(unidad2);
+				if(unidad2>9){unidad2=0;}
+				dato_talto[4-x]=unidad2;
+				unidad2++;
+				if(unidad2>9){unidad2=0;}
+				break;
+		case 3: lcd_putInt(unidad3);
+				if(unidad3>9){unidad3=0;}
+				dato_talto[4-x]=unidad3;
+				unidad3++;
+				if(unidad3>9){unidad3=0;}
+				break;
+		case 4: lcd_putInt(unidad4);
+				if(unidad4>9){unidad4=0;}
+				dato_talto[4-x]=unidad4;
+				unidad4++;
+				if(unidad4>9){unidad4=0;}
+				break;
 
 		}
 
-		if(!(pulsado(BtnUp)))
-		{
-			TemporizadorTimer0(500);
-			ResetTimer0();
-			lcd_putInt(unidad);
-			dato_talto[4-x]=unidad;
-			unidad++;
-			if(unidad>9){unidad=0;}
+	}
 
+	if(!(pulsado(BtnDown)))
+	{
+		TemporizadorTimer0(500);
+		ResetTimer0();
+
+		switch(x)
+		{
+		case 1: if(unidad1==0)
+				{unidad1=9;}
+				else
+				{unidad1--;}
+				lcd_putInt(unidad1);
+				dato_talto[4-x]=unidad1;
+				break;
+		case 2: if(unidad2==0)
+				{unidad2=9;}
+				else
+				{unidad2--;}
+				lcd_putInt(unidad2);
+				dato_talto[4-x]=unidad2;
+				break;
+		case 3: if(unidad3==0)
+				{unidad3=9;}
+				else
+				{unidad3--;}
+				lcd_putInt(unidad3);
+				dato_talto[4-x]=unidad3;
+				break;
+		case 4: if(unidad4==0)
+				{unidad4=9;}
+				else
+				{unidad4--;}
+				lcd_putInt(unidad4);
+				dato_talto[4-x]=unidad4;
+				break;
 		}
+
+	}
+
+
 
 		if(!(pulsado(BtnEnter)))
 		{
@@ -545,18 +816,25 @@ void OpenMenu()
 	while(!salir)
 	{
 
-		if(!(pulsado(BtnUp)) && menuPosition-1 > 0)
+		if(!(pulsado(BtnUp)) /*&& menuPosition-1 > 0*/)
 			{
 				TemporizadorTimer0(300);
 				ResetTimer0();
-				menuPosition--;
+				if(menuPosition-1> 0)
+				{ menuPosition--;}
+				else
+				{ menuPosition=6;}
 
 			}
-		else if(!(pulsado(BtnDown)) && menuPosition < iMENU)
+		else if(!(pulsado(BtnDown)) /*&& menuPosition < iMENU*/)
 			{
 				TemporizadorTimer0(300);
 				ResetTimer0();
-				menuPosition++;
+				if(menuPosition <iMENU)
+				{ menuPosition++;}
+				else
+				{ menuPosition=1;}
+
 			}
 
 		else if(!(pulsado(BtnEnter)))
@@ -686,9 +964,8 @@ VariarAmplitud()
 	value=DevolverValueUp();
 	static char auxVal[10];
 	static char auxValue[10];
-	uint16_t aux1=0;
-	uint16_t aux2=0;
-	uint16_t aux3=0;
+	uint32_t aux1=0;
+	uint32_t aux2=0;
 	uint16_t dat=0;
 	uint8_t exit=0;
 	ClearDisplay();
@@ -795,23 +1072,21 @@ VariarAmplitud()
 	}
 
 //---------------------------------------------------------------------
-		if(DevolverFlagVoI()==1)
+	if(DevolverFlagVoI()==1)
 		{
-			aux1=value_aux*1000/31;//valor entero
-			aux2=value_aux*10000/31;//valor con el decimal
-			aux3=aux1*10;
-			aux3= aux2-aux3;//decimal
-			if(aux3>0){dat= aux1+1;}
-			else{dat=aux1;}
+			// For upper value of x/y, use this ( x + y - 1 ) / y
+
+			if(value_aux>= 100)	{value_aux=100;}
+			aux1=value_aux*1000; //value x
+			aux2= aux1 + 31; //x+y
+			dat= (aux2-1)/31;
 		}
 		if(DevolverFlagVoI()==0)
 		{
-			aux1=value_aux*1000/62;//valor entero
-			aux2=value_aux*10000/62;//valor con el decimal
-			aux3=aux1*10;
-			aux3= aux2-aux3;//decimal
-			if(aux3>0){dat= aux1+1;}
-			else{dat=aux1;}
+			if(value_aux>= 200)	{value_aux=200;}
+			aux1=value_aux*1000; //value x
+			aux2= aux1 + 62; //x+y
+			dat=(aux2-1)/62;
 
 		}
 //------------------------------------------------------------------

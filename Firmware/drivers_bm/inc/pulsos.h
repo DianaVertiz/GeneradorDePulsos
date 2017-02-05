@@ -22,8 +22,8 @@ uint16_t  TIMER_UP=1000; //t  tiempo en ms
 uint16_t  PERIODO=3000; //p
 uint16_t VALUE_DOWN=0;
 uint16_t TIMER_DOWN;
-uint16_t value_down;
-uint16_t value_up;
+uint32_t value_down;
+uint32_t value_up;
 uint8_t flagVoI=1; //1 Modo corriente
 uint8_t flagPoN=1; //1 Pulsos positivos
 //const uint32_t value_down_d=(VALUE_DOWN_D*1023)/VCC;

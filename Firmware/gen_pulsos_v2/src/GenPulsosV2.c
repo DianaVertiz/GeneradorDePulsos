@@ -118,6 +118,7 @@ int main(void)
 
 
 	inicializarPulsadores();
+	InicializarTeclas();
 
 	InicializarLeds();
 	InicializarDAC();
@@ -140,6 +141,12 @@ int main(void)
 	{
 
 		caracter=Leer_intUART();
+		if(EscanearTeclado()==1)
+		{
+			TemporizadorTimer0(500);
+			ResetTimer0();
+			GenerarPulsos();
+		}
 
 		if(!(pulsado(BtnRight))) //STOP
 
@@ -167,7 +174,7 @@ int main(void)
 			GenerarPulsos();
 		}
 
-		if(!(pulsado(BtnUp))) //configuración rápida de la amplitud
+		if(!(pulsado(BtnUp)) || !(pulsado(BtnDown))) //configuración rápida de la amplitud
 		{
 			TemporizadorTimer0(500);
 			ResetTimer0();
