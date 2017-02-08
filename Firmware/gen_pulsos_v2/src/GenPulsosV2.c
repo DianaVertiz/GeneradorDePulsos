@@ -133,6 +133,7 @@ int main(void)
 	MostrarPulsos(DevolverNumPulsos(),DevolverValueUp(),DevolverTimeUp(),DevolverPeriodo(),DevolverFlagVoI(),DevolverFlagPoN());
 	InicializarSigno();
 	InicializarStop();
+	//PulsosNegativos();
 
 	WriteN();
 

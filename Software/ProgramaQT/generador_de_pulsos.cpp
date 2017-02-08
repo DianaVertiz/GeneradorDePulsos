@@ -192,7 +192,7 @@ void Generador_de_pulsos::readEduciaa()
     int b=0;
 
     a= 100*((buffer_split[1]).toInt()) + ((buffer_split[2]).toInt());
-
+    flag=1; //indica recepción desde la educiaa
     if((buffer_split[7]).toInt() == 1)
     {
         flagVoI=1;
@@ -623,6 +623,8 @@ void Generador_de_pulsos::on_toolButton_18_clicked()
 
 void Generador_de_pulsos::on_SalidaVoI_highlighted(const QString &arg1)
 {
+    if(flag==0)
+    {
     if(arg1=="Salida en corriente")
     {
     ui->doubleSpinBox->setRange(1,100);
@@ -650,10 +652,14 @@ void Generador_de_pulsos::on_SalidaVoI_highlighted(const QString &arg1)
     letra = 'w';
     Serial->putChar(letra);
     }
+    }
+    else {flag==0;}
 }
 
 void Generador_de_pulsos::on_SalidaPoN_highlighted(const QString &arg1)
 {
+    if(flag==0)
+    {
     if(arg1=="Pulsos positivos")
     {
     flagPoN=1;
@@ -669,8 +675,9 @@ void Generador_de_pulsos::on_SalidaPoN_highlighted(const QString &arg1)
     char letra;
     letra = 's';
     Serial->putChar(letra);
-
     }
+    }
+    else{flag==0;}
 }
 
 void Generador_de_pulsos::configurarVoI()
@@ -713,36 +720,52 @@ void Generador_de_pulsos::configurarPoN()
 //---------------------------------------------------------
 void Generador_de_pulsos::on_ValueN_valueChanged(int arg1)
 {
+    if(flag==0)
+    {
     on_NPulsos();
     ConfPulsos();
+    }
+    else{flag==0;}
+
 }
 
 void Generador_de_pulsos::on_doubleSpinBox_valueChanged(double arg1)
 {
-    on_ValueUp();
+    if(flag==0)
+    {
+        on_ValueUp();
 
-   if(flagVoI==1)
-   {
-        ConfValUp();
-   }
-   if(flagVoI==0)
-   {
-        ConfValUp_tension();
-   }
-
+        if(flagVoI==1)
+        {
+            ConfValUp();
+        }
+        if(flagVoI==0)
+        {
+            ConfValUp_tension();
+        }
+    }
+    else{flag=0;}
 }
 
 void Generador_de_pulsos::on_ValueT_valueChanged(int arg1)
 {
-    on_Tup();
-    ConfTup();
+    if(flag==0)
+    {
+        on_Tup();
+        ConfTup();
+    }
+    else{flag=0;}
 
 }
 
 void Generador_de_pulsos::on_ValueP_valueChanged(int arg1)
 {
+    if(flag==0)
+    {
     on_Periodo();
     ConfPeriodo();
+    }
+    else{flag==0;}
 }
 
 

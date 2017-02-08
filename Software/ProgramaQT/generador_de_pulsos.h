@@ -118,6 +118,8 @@ private:
     Ui::Generador_de_pulsos *ui;
     int flagVoI=1; //1 en modo corriente
     int flagPoN=1; //1 pulsos positivos
+    int flag=0; //flag de recepción de datos desde edu-ciaa
+                //si flag=1 recibo desde educiaa
     QByteArray serialData;
     QString serialBuffer;
 };
