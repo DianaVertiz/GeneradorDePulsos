@@ -81,11 +81,11 @@ void GenerarPulsos()
 	TIMER_DOWN=PERIODO-TIMER_UP;
 
 	while(pulsos < N_PULSOS)
-	   {
-	    	EncenderLeds(5);
+	   {	EncenderLed();
+	    	EncenderLeds(3);
 	    	Conversion(value_up);
 	    	TemporizadorTimer0(TIMER_UP-1);
-	    	ApagarLeds(5);
+	    	ApagarLeds(3);
 	    	Conversion(value_down);
 	    	ResetTimer0();
 	    	ResetTimer1();
@@ -93,6 +93,13 @@ void GenerarPulsos()
 
 	    	pulsos++;
 	    }
+	if(N_PULSOS*PERIODO > 500){ ApagarLed();}
+	else
+	{
+		TemporizadorTimer0(500-(N_PULSOS*PERIODO));
+		 ApagarLed();
+		 ResetTimer0();
+	}
 }
 
 

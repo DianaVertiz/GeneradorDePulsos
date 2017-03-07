@@ -17,7 +17,7 @@ Generador_de_pulsos::Generador_de_pulsos(QWidget *parent) :
 {
     ui->setupUi(this);
     Serial = new QSerialPort(this);
-    serialBuffer = "";
+    //serialBuffer = "";
 
     foreach (QSerialPortInfo port, QSerialPortInfo::availablePorts()) {
         ui->ListaPuertos->addItem(port.portName());
@@ -153,84 +153,183 @@ void Generador_de_pulsos::recibir_comVirtual()
 
 void Generador_de_pulsos::ConfInicio()
 {
-    configurarVoI();
-    configurarPoN();
-    on_NPulsos();
-    ConfPulsos();
-    on_ValueUp();
+   char letra;
+   letra = 'x';
+   Serial->putChar(letra);
 
-   if(flagVoI==1)
-   {
-        ConfValUp();
-   }
-   if(flagVoI==0)
-   {
-        ConfValUp_tension();
-   }
+       configurarVoI();
+       configurarPoN();
+       on_NPulsos();
+       ConfPulsos();
+       on_ValueUp();
 
-   on_Tup();
-   ConfTup();
-   on_Periodo();
-   ConfPeriodo();
+      if(flagVoI==1)
+      {
+           ConfValUp();
+      }
+      if(flagVoI==0)
+      {
+           ConfValUp_tension();
+      }
+
+      on_Tup();
+      ConfTup();
+      on_Periodo();
+      ConfPeriodo();
+
 
 }
 
 void Generador_de_pulsos::readEduciaa()
 {
-    serialData= Serial->readAll();
-    serialBuffer += QString::fromStdString(serialData.toStdString());
-    qDebug()<< serialBuffer<<"\n";
-
-    QStringList buffer_split = serialBuffer.split(",");
-    qDebug() << buffer_split;
-
-    ui->ValueN->setValue((buffer_split[0]).toInt());
+    QStringList buffer_split;
+    QString serialBuffer;
+    //QByteArray serialData;
+   // QByteArray aux;
 
 
+    QByteArray serialData= Serial->readAll();
+    while(Serial->waitForReadyRead(1000))
+    {
 
+            serialData.append(Serial->readAll());
+            //serialData=Serial->readLine();
+
+    }
+
+
+         serialBuffer += QString::fromStdString(serialData.toStdString());
+         qDebug()<< serialBuffer<<"\n";
+
+         buffer_split = serialBuffer.split(",");
+         qDebug() << buffer_split;
+
+    serialBuffer = "";
+
+    serialData.clear();
+
+    ModificarDatos(buffer_split);
+
+}
+
+void Generador_de_pulsos::ModificarDatos(QStringList buffer)
+{
     qreal a=0;
     int b=0;
 
-    a= 100*((buffer_split[1]).toInt()) + ((buffer_split[2]).toInt());
-    flag=1; //indica recepción desde la educiaa
-    if((buffer_split[7]).toInt() == 1)
+    //Número de pulsos
+    if(ui->ValueN->value()!= (buffer[0]).toInt())
     {
-        flagVoI=1;
-        ui->SalidaVoI->setCurrentIndex(0);
-        ui->doubleSpinBox->setSuffix(" mA");
-        b= qFloor((31*a)/1000);
-    }
-    if((buffer_split[7]).toInt() == 0)
-    {
-        flagVoI=0;
-        ui->SalidaVoI->setCurrentIndex(1);
-        ui->doubleSpinBox->setSuffix(" V");
-        b= qFloor((62*a)/1000);
+        flagN=1;
+        ui->ValueN->setValue((buffer[0]).toInt());
+
     }
 
+    //Amplitud de pulsos
 
-    if((buffer_split[8]).toInt() == 1)
-    {
-        flagPoN=1;
-        ui->SalidaPoN->setCurrentIndex(0);
-        ui->doubleSpinBox->setPrefix("");
+    a= 100*((buffer[1]).toInt()) + ((buffer[2]).toInt());
+
+    if(flagVoI != (buffer[7]).toInt())
+    {  //cambió el valor del flagVoI
+
+        flag1=1;
+
+        if((buffer[7]).toInt() == 1)
+        {
+            flagVoI=1;
+            ui->SalidaVoI->setCurrentIndex(0);
+            ui->doubleSpinBox->setSuffix(" mA");
+             b= qFloor((31*a)/1000);
+        }
+        if((buffer[7]).toInt() == 0)
+        {
+            flagVoI=0;
+            ui->SalidaVoI->setCurrentIndex(1);
+            ui->doubleSpinBox->setSuffix(" V");
+            b= qFloor((62*a)/1000);
+        }
+
     }
-    if((buffer_split[8]).toInt() == 0)
+    else
     {
-        flagPoN=0;
-        ui->SalidaPoN->setCurrentIndex(1);
-        ui->doubleSpinBox->setPrefix("-");
+        if((buffer[7]).toInt() == 1)
+        {
+            flagVoI=1;
+            ui->SalidaVoI->setCurrentIndex(0);
+            ui->doubleSpinBox->setSuffix(" mA");
+             b= qFloor((31*a)/1000);
+        }
+        if((buffer[7]).toInt() == 0)
+        {
+            flagVoI=0;
+            ui->SalidaVoI->setCurrentIndex(1);
+            ui->doubleSpinBox->setSuffix(" V");
+            b= qFloor((62*a)/1000);
+        }
     }
 
-    ui->doubleSpinBox->setValue(b);
+    if(ui->doubleSpinBox->value() != b)
+    {
+        flagV=1;
+        ui->doubleSpinBox->setValue(b);
+    }
 
-    ui->ValueT->setValue(100*((buffer_split[3]).toInt()) + ((buffer_split[4]).toInt()));
 
-    ui->ValueP->setValue(100*((buffer_split[5]).toInt()) + ((buffer_split[6]).toInt()));
+    if(flagPoN != (buffer[8]).toInt())
+    {   //cambió el valor del flagPoN
 
-    serialBuffer = "";
-    serialData.clear();
+        flag2=1;
 
+        if((buffer[8]).toInt() == 1)
+        {
+            flagPoN=1;
+            ui->SalidaPoN->setCurrentIndex(0);
+            ui->doubleSpinBox->setPrefix("");
+        }
+        if((buffer[8]).toInt() == 0)
+        {
+            flagPoN=0;
+            ui->SalidaPoN->setCurrentIndex(1);
+            ui->doubleSpinBox->setPrefix("-");
+        }
+
+    }
+    else
+    {
+        if((buffer[8]).toInt() == 1)
+        {
+            flagPoN=1;
+            ui->SalidaPoN->setCurrentIndex(0);
+            ui->doubleSpinBox->setPrefix("");
+        }
+        if((buffer[8]).toInt() == 0)
+        {
+            flagPoN=0;
+            ui->SalidaPoN->setCurrentIndex(1);
+            ui->doubleSpinBox->setPrefix("-");
+        }
+
+    }
+
+
+
+    int c,d;
+    c = 100*((buffer[3]).toInt()) + ((buffer[4]).toInt());
+
+    if(ui->ValueT->value() != c)
+    {
+    flagT=1;
+    ui->ValueT->setValue(c);
+    }
+
+
+    d= 100*((buffer[5]).toInt()) + ((buffer[6]).toInt());
+
+    if(ui->ValueP->value() != d)
+    {
+     flagP=1;
+     ui->ValueP->setValue(d);
+    }
 
 }
 
@@ -574,11 +673,11 @@ void Generador_de_pulsos::on_toolButton_20_clicked()
 
 void Generador_de_pulsos::on_toolButton_12_clicked()
 {
-    if(flagVoI==1)
+   /* if(flagVoI==1)
     {
-        if(ui->doubleSpinBox->value()==100)
+        if(ui->doubleSpinBox->value()==85)
         {
-            ui->doubleSpinBox->setValue(1);
+            ui->doubleSpinBox->setValue(10);
         }
         else
         {
@@ -590,21 +689,26 @@ void Generador_de_pulsos::on_toolButton_12_clicked()
 
     if(flagVoI==0)
     {
-        if(ui->doubleSpinBox->value()==200)
+        if(ui->doubleSpinBox->value()==170)
         {
-            ui->doubleSpinBox->setValue(1);
+            ui->doubleSpinBox->setValue(10);
         }
         else
         {
             ui->doubleSpinBox->setValue(ui->doubleSpinBox->value()+10);
 
         }
-    }
+    }*/
+
+    ui->doubleSpinBox->setValue(ui->doubleSpinBox->value()+10);
+
+
 }
 
 void Generador_de_pulsos::on_toolButton_14_clicked()
 {
-    ui->doubleSpinBox->setValue(ui->doubleSpinBox->value()-10);
+
+   ui->doubleSpinBox->setValue(ui->doubleSpinBox->value()-10);
 
 }
 
@@ -623,61 +727,65 @@ void Generador_de_pulsos::on_toolButton_18_clicked()
 
 void Generador_de_pulsos::on_SalidaVoI_highlighted(const QString &arg1)
 {
-    if(flag==0)
+    if(flag1==0)
     {
-    if(arg1=="Salida en corriente")
-    {
-    ui->doubleSpinBox->setRange(1,100);
-    ui->doubleSpinBox->setSuffix(" mA");
-    flagVoI=1;
 
-    on_ValueUp();
-    ConfValUp();
+        if(arg1=="Salida en corriente")
+        {
+        ui->doubleSpinBox->setRange(1,85);
+        ui->doubleSpinBox->setSuffix(" mA");
+        flagVoI=1;
 
-    char letra;
-    letra = 'u';
-    Serial->putChar(letra);
+        on_ValueUp();
+        ConfValUp();
+
+        char letra;
+        letra = 'u';
+        Serial->putChar(letra);
+        }
+
+        if(arg1=="Salida en tensión")
+        {
+        ui->doubleSpinBox->setRange(1,170);
+        ui->doubleSpinBox->setSuffix(" V");
+        flagVoI=0;
+
+        on_ValueUp();
+        ConfValUp_tension();
+
+        char letra;
+        letra = 'w';
+        Serial->putChar(letra);
+        }
+
     }
-
-    if(arg1=="Salida en tensión")
-    {
-    ui->doubleSpinBox->setRange(1,200);
-    ui->doubleSpinBox->setSuffix(" V");
-    flagVoI=0;
-
-    on_ValueUp();
-    ConfValUp_tension();
-
-    char letra;
-    letra = 'w';
-    Serial->putChar(letra);
-    }
-    }
-    else {flag==0;}
+    else {flag1=0;}
 }
 
 void Generador_de_pulsos::on_SalidaPoN_highlighted(const QString &arg1)
 {
-    if(flag==0)
+    if(flag2==0)
     {
-    if(arg1=="Pulsos positivos")
-    {
-    flagPoN=1;
-    ui->doubleSpinBox->setPrefix("");
-    char letra;
-    letra = 'o';
-    Serial->putChar(letra);
+
+        if(arg1=="Pulsos positivos")
+        {
+        flagPoN=1;
+        ui->doubleSpinBox->setPrefix("");
+        char letra;
+        letra = 'o';
+        Serial->putChar(letra);
+        }
+        if(arg1=="Pulsos negativos")
+        {
+        flagPoN=0;
+        ui->doubleSpinBox->setPrefix("-");
+        char letra;
+        letra = 's';
+        Serial->putChar(letra);
+        }
+
     }
-    if(arg1=="Pulsos negativos")
-    {
-    flagPoN=0;
-    ui->doubleSpinBox->setPrefix("-");
-    char letra;
-    letra = 's';
-    Serial->putChar(letra);
-    }
-    }
-    else{flag==0;}
+    else{flag2=0;}
 }
 
 void Generador_de_pulsos::configurarVoI()
@@ -720,18 +828,18 @@ void Generador_de_pulsos::configurarPoN()
 //---------------------------------------------------------
 void Generador_de_pulsos::on_ValueN_valueChanged(int arg1)
 {
-    if(flag==0)
+    if(flagN==0)
     {
     on_NPulsos();
     ConfPulsos();
     }
-    else{flag==0;}
+    else{flagN=0;}
 
 }
 
 void Generador_de_pulsos::on_doubleSpinBox_valueChanged(double arg1)
 {
-    if(flag==0)
+    if(flagV==0)
     {
         on_ValueUp();
 
@@ -744,28 +852,28 @@ void Generador_de_pulsos::on_doubleSpinBox_valueChanged(double arg1)
             ConfValUp_tension();
         }
     }
-    else{flag=0;}
+    else{flagV=0;}
 }
 
 void Generador_de_pulsos::on_ValueT_valueChanged(int arg1)
 {
-    if(flag==0)
+    if(flagT==0)
     {
         on_Tup();
         ConfTup();
     }
-    else{flag=0;}
+    else{flagT=0;}
 
 }
 
 void Generador_de_pulsos::on_ValueP_valueChanged(int arg1)
 {
-    if(flag==0)
+    if(flagP==0)
     {
-    on_Periodo();
-    ConfPeriodo();
+        on_Periodo();
+        ConfPeriodo();
     }
-    else{flag==0;}
+    else{flagP=0;}
 }
 
 

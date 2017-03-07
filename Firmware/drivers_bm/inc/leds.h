@@ -49,6 +49,14 @@
 
  //Initials     Name
 
+#define LED0_R 1
+#define LED0_G 2
+#define LED0_B 3
+#define LED1 4
+#define LED2 5
+#define LED3 6
+//#define TRUE 1
+
 /*
  * modification history (new versions first)
  * -----------------------------------------------------------
@@ -68,9 +76,13 @@
 
 /*==================[external functions declaration]=========================*/
 
-void InicializarLed(void);
-void EncenderLed();
-void ApagarLed();
+void InicializarLeds(void);
+void EncenderLeds(uint8_t);
+void ApagarLeds(uint8_t);
+void CambioEstado(uint8_t);
+void EncenderRGB(void);
+void ApagarRGB(void);
+void CambiarRGB(void);
 
 
 /** @} doxygen end group definition */

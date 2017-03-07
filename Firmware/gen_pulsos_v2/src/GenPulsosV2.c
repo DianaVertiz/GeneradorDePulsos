@@ -35,7 +35,7 @@
 /*==================[inclusions]=============================================*/
 
 #include "GenPulsosV2.h"
-#include "led.h"
+#include "leds.h"
 #include "dac.h"
 #include "timer.h"
 #include "timer2.h"
@@ -85,11 +85,11 @@ void UART2_IRQHandler()
 void TIMER2_IRQHandler()
 {
 	uint8_t var=0;
-	MensajeScroll();
+	MensajeStop();
 	while (Chip_TIMER_MatchPending(LPC_TIMER2, 2))
 		{
 			var=Leer_intUART();
-			EncenderLeds(4);
+
 			if(!(pulsado(BtnRight)) || var=='r') //STOP
 
 			{
@@ -106,7 +106,7 @@ void TIMER2_IRQHandler()
 	DesactivarPin();
 	var=0;
 	MostrarPulsos(DevolverNumPulsos(),DevolverValueUp(),DevolverTimeUp(),DevolverPeriodo(),DevolverFlagVoI(),DevolverFlagPoN());
-	ApagarLeds(4);
+
 }
 
 
@@ -118,36 +118,32 @@ int main(void)
 
 
 	inicializarPulsadores();
-	InicializarTeclas();
+	//InicializarTeclas();
 
-	InicializarLeds();
+	InicializarLed();
 	InicializarDAC();
 	InicializaTimer0();
 	InicializaTimer1();
+
+	InicializarLeds();
 
 	IniciarUart();
 	lcd_init_port();
 	lcd_init();
 
-	arriba();
 	MostrarPulsos(DevolverNumPulsos(),DevolverValueUp(),DevolverTimeUp(),DevolverPeriodo(),DevolverFlagVoI(),DevolverFlagPoN());
 	InicializarSigno();
 	InicializarStop();
-	//PulsosNegativos();
 
-	WriteN();
+
+	//WriteN();
 
 
 	while(1)
 	{
 
 		caracter=Leer_intUART();
-		if(EscanearTeclado()==1)
-		{
-			TemporizadorTimer0(500);
-			ResetTimer0();
-			GenerarPulsos();
-		}
+
 
 		if(!(pulsado(BtnRight))) //STOP
 
@@ -163,7 +159,7 @@ int main(void)
 		{
 			TemporizadorTimer0(500);
 			ResetTimer0();
-			OpenMenu();
+			OpenMenu2();
 
 			MostrarPulsos(DevolverNumPulsos(),DevolverValueUp(),DevolverTimeUp(),DevolverPeriodo(),DevolverFlagVoI(),DevolverFlagPoN());
 			WriteN();
@@ -175,14 +171,14 @@ int main(void)
 			GenerarPulsos();
 		}
 
-		if(!(pulsado(BtnUp)) || !(pulsado(BtnDown))) //configuración rápida de la amplitud
+		/*if(!(pulsado(BtnUp)) || !(pulsado(BtnDown))) //configuración rápida de la amplitud
 		{
 			TemporizadorTimer0(500);
 			ResetTimer0();
 			VariarAmplitud();
 			MostrarPulsos(DevolverNumPulsos(),DevolverValueUp(),DevolverTimeUp(),DevolverPeriodo(),DevolverFlagVoI(),DevolverFlagPoN());
 			WriteN();
-		}
+		}*/
 
 
 
@@ -242,6 +238,11 @@ int main(void)
     	    		ActivarPin();
     	    		InitTimer2_MatchInterrupt(10);
     	    		break;
+
+    	    case 'x':
+    	    		MensajeScroll();
+    	    		//MostrarPulsos(DevolverNumPulsos(),DevolverValueUp(),DevolverTimeUp(),DevolverPeriodo(),DevolverFlagVoI(),DevolverFlagPoN());
+    	        	break;
     	}
 
 	}

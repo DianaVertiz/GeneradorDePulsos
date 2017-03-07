@@ -418,50 +418,55 @@ void arriba()
 
 void MensajeScroll()
 {
-	ClearDisplay();
+
 	uint8_t salir=0;
-	//uint8_t posicion=0;
-	printf_lcd(" STOP!    STOP! ");
-	lcd_gotoxy(1, 2);
-	printf_lcd("SIN ESTIMULACION");
-	/*TemporizadorTimer0(1000);
+	uint8_t posicion=0;
+
+	TemporizadorTimer0(300);
 	ResetTimer0();
 	ClearDisplay();
-	printf_lcd(" STOP!    STOP! ");*/
+	printf_lcd(" CONECTADO      ");
 
-			/*ClearDisplay();
-			printf_lcd(" STOP!    STOP! ");
 		 // scroll 9 posiciones a la izquierda
 
-		  for (posicion = 0; posicion < 8; posicion++) {
+		 /* for (posicion = 0; posicion < 6; posicion++) {
 		    // scroll 1 posicion a la izquierda
-		    DesplazarDisplayIzquierda();
-		    TemporizadorTimer0(300);
-		    ResetTimer0();
-		  }
+			  DesplazarDisplayDerecha();
 
-		  for (posicion = 0; posicion < 16 ; posicion++) {
+		    TemporizadorTimer0(200);
+		    ResetTimer0();
+		  }*/
+
+		  for (posicion = 0; posicion <5 ; posicion++) {
 		  	// scroll 1 posicion a la Derecha
 			  DesplazarDisplayDerecha();
 			  TemporizadorTimer0(300);
 			  ResetTimer0();
 		  		  }
-		  for (posicion = 0; posicion < 8; posicion++) {
+		  for (posicion = 0; posicion < 5; posicion++) {
 		  // scroll 1 posicion a la izquierda
 			  DesplazarDisplayIzquierda();
 			  TemporizadorTimer0(300);
 			  ResetTimer0();
 		  		  }
-		  ClearDisplay();
-		  printf_lcd(" STOP!    STOP! ");
-		  lcd_gotoxy(1, 2);
-		  printf_lcd("SIN ESTIMULACION");*/
+		  //ClearDisplay();
+		  //printf_lcd(" STOP!    STOP! ");
+		  //lcd_gotoxy(1, 2);
+		  //printf_lcd("SIN ESTIMULACION");
 
 
-		 //TemporizadorTimer0(500);
-		 //ResetTimer0();
+	//TemporizadorTimer0(100);
+	//ResetTimer0();
 
-	//ClearDisplay();
+	ClearDisplay();
+}
+
+void MensajeStop()
+{
+	ClearDisplay();
+	printf_lcd(" STOP!    STOP! ");
+	lcd_gotoxy(1, 2);
+	printf_lcd("SIN ESTIMULACION");
 }
 
 

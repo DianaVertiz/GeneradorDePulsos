@@ -1,24 +1,22 @@
 /*
- * menu.h
+ * menu2.h
  *
- *  Created on: 6/12/2016
+ *  Created on: 26/2/2017
  *      Author: je_su
  */
 
-#ifndef MENU_H
-#define MENU_H
+#ifndef MENU2_H
+#define MENU2_H
 #include "stdint.h"
 
-/*
-
-//CONSTANTES Y VARIABLES
+/* CONSTANTES Y VARIABLES */
 #define MOD_NUM_PULSOS       1
 #define MOD_AMPLITUD       	 2
 #define MOD_TaLTO        	 3
 #define MOD_PERIODO          4
 
 uint8_t salir=0;
-uint8_t salir2=0;
+uint8_t salir_menu=0;
 uint8_t menuPosition       = 1;
 const uint8_t rowsLCD      = 2;     // Numero de filas del LCD
 const uint8_t columnsLCD   = 16;    // Numero de columnas del LCD
@@ -38,42 +36,21 @@ uint8_t dato_amplitud[3]={15,15,15};
 uint8_t dato_talto[4]={15,15,15,15};
 uint8_t dato_periodo[4]={15,15,15,15};
 uint16_t dato_guardado=0;
-
-
-//TEXTOS MENUS
+/* TEXTOS MENUS */
 const uint8_t iMENU = 6;
 const char *txMENU[] = {
     "Nro de pulsos  ",
     "Amplitud       ",
     "Tiempo en alto ",
     "Periodo        ",
-    "Guardar y salir",
-    "Salir          "
 };
-
-// TEXTOS SUBMENU
-const char *txSUBMENU[] = {
-    "Nro de Pulsos:  ",
-    "Amplitud:       ",
-    "Tiempo en alto: ",
-    "Periodo:        ",
-};
-
-
-void OpenMenu(void);
-void Conf_Pulsos(uint8_t);
-void Guardar_Pulsos(void);
-void Conf_previa(void);
-void Conf_Amplitud(uint8_t);
-void Guardar_Amplitud(void);
-void Conf_TUp(uint8_t);
-void Guardar_TUp(void);
-void Conf_Periodo(uint8_t);
-void Guardar_Periodo(void);
-uint16_t GuardarDato(uint8_t*, uint8_t, uint16_t);
-void VariarAmplitud(void);
+void OpenMenu2(void);
+void Conf_Amplitud2(void);
+void Conf_Pulsos2(void);
+void Conf_TUp2(void);
+void Conf_Periodo2(void);
+void ModoEstimulacion(void);
+void Polaridad();
 
 
-*/
-
-#endif /* MENU_H_ */
+#endif /* MENU2_H_ */

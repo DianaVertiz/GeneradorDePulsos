@@ -25,6 +25,7 @@
 #else
 #endif
 
+/*
 uint16_t GuardarDato(uint8_t* variable, uint8_t tamanio, uint16_t var)
 {
 	uint8_t i,j;
@@ -798,7 +799,6 @@ void Guardar_TUp()
 
 
 
-
 void OpenMenu()
 {
 	inicializarPulsadores();
@@ -816,7 +816,7 @@ void OpenMenu()
 	while(!salir)
 	{
 
-		if(!(pulsado(BtnUp)) /*&& menuPosition-1 > 0*/)
+		if(!(pulsado(BtnUp)))
 			{
 				TemporizadorTimer0(300);
 				ResetTimer0();
@@ -826,7 +826,7 @@ void OpenMenu()
 				{ menuPosition=6;}
 
 			}
-		else if(!(pulsado(BtnDown)) /*&& menuPosition < iMENU*/)
+		else if(!(pulsado(BtnDown)) )
 			{
 				TemporizadorTimer0(300);
 				ResetTimer0();
@@ -1097,4 +1097,4 @@ VariarAmplitud()
 
 
 }
-
+*/

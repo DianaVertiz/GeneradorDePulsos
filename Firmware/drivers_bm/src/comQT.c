@@ -101,7 +101,8 @@ void WriteN()
 	{uartWriteByte('1');}
 	else
 	{uartWriteByte('0');}
-
+	uartWriteByte(',');
+	uartWriteByte('\r\n');
 
 }
 

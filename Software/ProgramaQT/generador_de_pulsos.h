@@ -112,16 +112,23 @@ private slots:
 
     void recibir_comVirtual();
 
-
+    void ModificarDatos(QStringList);
 private:
 
     Ui::Generador_de_pulsos *ui;
     int flagVoI=1; //1 en modo corriente
     int flagPoN=1; //1 pulsos positivos
-    int flag=0; //flag de recepción de datos desde edu-ciaa
-                //si flag=1 recibo desde educiaa
-    QByteArray serialData;
-    QString serialBuffer;
+    //flags de recepción de datos desde edu-ciaa
+    //si flag=1 recibo desde educiaa
+    int flag1=0; //VoI
+    int flag2=0; //PoN
+    int flagN=0;
+    int flagV=0;
+    int flagT=0;
+    int flagP=0;
+    //QByteArray serialData;
+    //QString serialBuffer;
+
 };
 
 #endif // GENERADOR_DE_PULSOS_H

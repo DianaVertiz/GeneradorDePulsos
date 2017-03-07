@@ -28,5 +28,6 @@ void PosicionarCursor(uint8_t, uint8_t);
 void arrow(void);
 void arriba(void);
 void MensajeScroll(void);
+void MensajeStop(void);
 #endif /* MANEJO_DISPLAY_H_ */
 
