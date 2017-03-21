@@ -26,7 +26,6 @@ bool_t ReadByte(uint8_t*);
 void uartWriteByte(uint8_t);
 void uartWriteString(char*);
 uint16_t Escalado(uint16_t);
-void LeeArray(char*);
 void EnviarMensaje(char*, uint8_t);
 void Escribir_dato(uint8_t);
 void WriteInt(uint16_t);

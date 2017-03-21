@@ -427,15 +427,6 @@ void MensajeScroll()
 	ClearDisplay();
 	printf_lcd(" CONECTADO      ");
 
-		 // scroll 9 posiciones a la izquierda
-
-		 /* for (posicion = 0; posicion < 6; posicion++) {
-		    // scroll 1 posicion a la izquierda
-			  DesplazarDisplayDerecha();
-
-		    TemporizadorTimer0(200);
-		    ResetTimer0();
-		  }*/
 
 		  for (posicion = 0; posicion <5 ; posicion++) {
 		  	// scroll 1 posicion a la Derecha
@@ -449,14 +440,6 @@ void MensajeScroll()
 			  TemporizadorTimer0(300);
 			  ResetTimer0();
 		  		  }
-		  //ClearDisplay();
-		  //printf_lcd(" STOP!    STOP! ");
-		  //lcd_gotoxy(1, 2);
-		  //printf_lcd("SIN ESTIMULACION");
-
-
-	//TemporizadorTimer0(100);
-	//ResetTimer0();
 
 	ClearDisplay();
 }

@@ -26,6 +26,7 @@ void ReadModifyT()
     dato[1]=aux2;
 
 	dat=(dato[0]*100)+dato[1];
+	if(dat==0){dat=1;}
 	ModificarTimeUp(dat);
 }
 void ReadModifyP()
@@ -101,8 +102,9 @@ void WriteN()
 	{uartWriteByte('1');}
 	else
 	{uartWriteByte('0');}
-	uartWriteByte(',');
-	uartWriteByte('\r\n');
+	//uartWriteByte(',');
+	uartWriteByte('\n');
+	//uartWriteByte('\0');
 
 }
 

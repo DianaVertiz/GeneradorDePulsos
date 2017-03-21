@@ -13,8 +13,11 @@ TEMPLATE = app
 
 
 SOURCES += main.cpp\
-        generador_de_pulsos.cpp
+        generador_de_pulsos.cpp \
+    worker.cpp
 
-HEADERS  += generador_de_pulsos.h
+HEADERS  += \
+    generador_de_pulsos.h \
+    worker.h
 
 FORMS    += generador_de_pulsos.ui

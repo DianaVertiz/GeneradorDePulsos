@@ -90,33 +90,7 @@ uint16_t Escalado(uint16_t valor)
 	return valor;
 }
 
-void LeerArray(char* array)
-{
-	uint8_t char_puls=0;
-	uint8_t i_N=0;
-	while (i_N<4 && char_puls!='\rn')
-		{
-			char_puls=0;
-			while(char_puls==0)
-			{char_puls=Leer_intUART(); }
-			array[i_N]=(char)char_puls;
-			TemporizadorTimer0(5);
-			ResetTimer0();
 
-			i_N++;
-
-		}
-
-		char_puls=0;
-
-
-	/*uint8_t *pdat;
-
-	pdat = (uint8_t *) &array[0];
-
-	Chip_UART_Read(LPC_USART2, pdat, size);*/
-
-}
 
 
 uint8_t uartReadByte(){
@@ -164,57 +138,6 @@ void FinInt()
 {
 		NVIC_DisableIRQ(UART2_IRQn);
 		Chip_UART_IntDisable(LPC_USART2, (UART_IER_RBRINT | UART_IER_RLSINT));
-}
-
-
-uint16_t CharToInt(char* vector,uint8_t size)
-{
-
-
-		uint8_t *pdato;
-		pdato = (uint8_t *) &vector[0];
-
-		uint8_t b0= pdato[0] - 48;
-		uint8_t b1= pdato[1];
-		uint8_t b2= pdato[2];
-		uint8_t b3= pdato[3];
-		uint8_t b4= pdato[4];
-		uint16_t var;
-
-			if(b1 =='\r')
-				{
-					var= (uint16_t)b0;
-				}
-			else
-				{
-					b1= b1 - 48;
-					if(b2 == '\r')
-						{
-							var= (uint16_t)(10*b0 + b1);
-						}
-					else
-						{
-							b2= b2 - 48;
-							if(b3 == '\r')
-								{
-									var= 100*b0 + 10*b1 + b2;
-								}
-							else
-								{
-									b3= b3 - 48;
-									if(b4 == '\r')
-										{
-											var= 1000*b0 + 100*b1 + 10*b2 + b3;
-										}
-								}
-
-						}
-
-
-				}
-
-	return var;
-
 }
 
 

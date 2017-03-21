@@ -1,14 +1,10 @@
 #include "generador_de_pulsos.h"
 #include "ui_generador_de_pulsos.h"
+#include "worker.h"
 #include<QtSerialPort/QSerialPort>
 #include<QtSerialPort/QSerialPortInfo>
 #include<QtMath>
-
-QSerialPort * Serial;
-QSerialPort * Serial_virtual;
-
-char stateport = 0;
-char stateport2 = 0;
+#include <QThread>
 
 
 Generador_de_pulsos::Generador_de_pulsos(QWidget *parent) :
@@ -16,146 +12,81 @@ Generador_de_pulsos::Generador_de_pulsos(QWidget *parent) :
     ui(new Ui::Generador_de_pulsos)
 {
     ui->setupUi(this);
-    Serial = new QSerialPort(this);
-    //serialBuffer = "";
-
-    foreach (QSerialPortInfo port, QSerialPortInfo::availablePorts()) {
-        ui->ListaPuertos->addItem(port.portName());
-        ui->ListaPuertos_2->addItem(port.portName());
+    worker *mworker=new worker;
+    foreach (QSerialPortInfo port, QSerialPortInfo::availablePorts())
+    {
+    ui->ListaPuertos->addItem(port.portName());
+    ui->ListaPuertos_2->addItem(port.portName());
     }
+
+    mworker->moveToThread(&cThread);
+
+    connect(ui->radioButton,SIGNAL(clicked()),this, SLOT(namePort()));
+    connect(ui->radioButton_2,SIGNAL(clicked()),this,SLOT(namePort_2()));
+    connect(this,SIGNAL(nomPort(QString)), mworker, SLOT(initPort(QString)));
+    connect(this,SIGNAL(nomPort_2(QString)), mworker, SLOT(initPort_2(QString)));
+    connect(mworker,SIGNAL(mensajeError(QString,QString)),this,SLOT(messageWarning(QString,QString)));
+    connect(mworker,SIGNAL(mensajeOK(QString, QString)),this,SLOT(messageInfo(QString,QString)));
+    connect(mworker, SIGNAL(initPortOK()), this, SLOT(ConfInicio()));
+    connect(mworker, SIGNAL(initPortNotOK()), this, SLOT(animate_click()));
+    connect(mworker, SIGNAL(initPort2NotOK()), this, SLOT(animate_click_2()));
+    connect(this,SIGNAL(send_char(char)), mworker, SLOT(envia_char(char)));
+    connect(this,SIGNAL(send_byte(QByteArray)), mworker, SLOT(envia_byte(QByteArray)));
+    connect(this,SIGNAL(wait_written()), mworker, SLOT(wait_for_write()));
+    connect(mworker, SIGNAL(datosCargados(QStringList)), this, SLOT(ModificarDatos(QStringList)));
+
+    cThread.start();
 
 }
 
 Generador_de_pulsos::~Generador_de_pulsos()
 {
-    Serial->close();
+    cThread.quit();
+    cThread.wait();
     delete ui;
 }
 
+void Generador_de_pulsos::messageWarning(QString title, QString mensaje)
+{
+     QMessageBox::warning(this,title, mensaje);
+}
 
-void Generador_de_pulsos::on_radioButton_clicked()
+void Generador_de_pulsos::namePort()
 {
     QString nameport;
-
     nameport=ui->ListaPuertos->currentText();
-    if(stateport==0)
-    {
-      Serial = new QSerialPort(this); // se crea un objeto de tipo puerto serial en esta ventana
-      Serial->setPortName(nameport); // se le asigna le nombre del puerto
-
-      Serial->open(QIODevice::ReadWrite); // abre la comunicación en modo lectura y escritura
-
-      if( Serial->isOpen()==false)
-      {
-        Serial->clearError();
-        //Qmessagebox emite un mensaje en una caja aparte a la ventana actual en modo de alerta.
-        QMessageBox::warning(this,"Error en el puerto", "Imposible abrir puerto"+nameport);
-
-        Serial->close();
-        stateport = 1;
-        ui->radioButton->animateClick(200);
-
-      }
-      else
-      {
-        //Qmessagebox emite un mensaje en una caja aparte a la ventana actual en modo de notificacion.
-        QMessageBox::information(this, "Puerto Abierto", "Se abrió el puerto!: "+nameport);
-        // Configuraciones para la comunicacion serie segun sea el caso.
-        Serial->setBaudRate(QSerialPort::Baud115200);
-        Serial->setStopBits(QSerialPort::OneStop);
-        Serial->setParity(QSerialPort::NoParity);
-        Serial->setDataBits(QSerialPort::Data8);
-        Serial->setFlowControl(QSerialPort::NoFlowControl);
-        stateport = 2;
-        ConfInicio();
-        connect(Serial,SIGNAL(readyRead()),this,SLOT(readEduciaa()));
-
-
-      }
-    }
-    else if( stateport==1 )
-    { stateport = 0;  }
-    else if( stateport==2 )
-    {
-      Serial->close();
-      Serial->destroyed();
-      stateport = 0;
-    }
-
+    emit nomPort(nameport);
 }
 
-void Generador_de_pulsos::on_radioButton_2_clicked()
+void Generador_de_pulsos::namePort_2()
 {
-    QString nameport2;
-
-    nameport2=ui->ListaPuertos_2->currentText();
-
-    if(stateport2==0)
-    {
-      Serial_virtual = new QSerialPort(this); // se crea un objeto de tipo puerto serial en esta ventana
-      Serial_virtual->setPortName(nameport2); // se le asigna le nombre del puerto
-
-      Serial_virtual->open(QIODevice::ReadOnly); // abre la comunicación en modo lectura y escritura
-
-      if( Serial_virtual->isOpen()==false)
-      {
-        Serial_virtual->clearError();
-        //Qmessagebox emite un mensaje en una caja aparte a la ventana actual en modo de alerta.
-        QMessageBox::warning(this,"Error en el puerto", "Imposible abrir puerto"+nameport2);
-
-        Serial_virtual->close();
-        stateport2 = 1;
-        ui->radioButton_2->animateClick(200);
-
-      }
-      else
-      {
-        //Qmessagebox emite un mensaje en una caja aparte a la ventana actual en modo de notificacion.
-        QMessageBox::information(this, "Puerto Abierto", "Se abrió el puerto!: "+nameport2);
-        // Configuraciones para la comunicacion serie segun sea el caso.
-        Serial_virtual->setBaudRate(QSerialPort::Baud115200);
-        Serial_virtual->setStopBits(QSerialPort::OneStop);
-        Serial_virtual->setParity(QSerialPort::NoParity);
-        Serial_virtual->setDataBits(QSerialPort::Data8);
-        Serial_virtual->setFlowControl(QSerialPort::NoFlowControl);
-        stateport2 = 2;
-      }
-    }
-    else if( stateport2==1 )
-    { stateport2 = 0;  }
-    else if( stateport2==2 )
-    {
-      Serial_virtual->close();
-      Serial_virtual->destroyed();
-      stateport2 = 0;
-    }
-
-     connect(Serial_virtual,SIGNAL(readyRead()),this,SLOT(recibir_comVirtual()));
-
+    QString nameport;
+    nameport=ui->ListaPuertos_2->currentText();
+    emit nomPort_2(nameport);
 }
 
-void Generador_de_pulsos::recibir_comVirtual()
+void Generador_de_pulsos::messageInfo(QString title, QString mensaje)
 {
-    int num_datos;
+    QMessageBox::information(this,title, mensaje);
+}
 
-    char dato;
-    num_datos =  Serial_virtual->bytesAvailable();
-    if (num_datos > 0) {    // hay algo, saco un solo byte
-        Serial_virtual->getChar(&dato);
-
-        if (dato == 'e') {
-            char letra;
-            letra = 'e';
-            Serial->putChar(letra);}
-    }
+void Generador_de_pulsos::animate_click()
+{
+    ui->radioButton->animateClick(200);
 
 }
+
+void Generador_de_pulsos::animate_click_2()
+{
+    ui->radioButton_2->animateClick(200);
+}
+
 
 void Generador_de_pulsos::ConfInicio()
 {
    char letra;
    letra = 'x';
-   Serial->putChar(letra);
+   emit send_char(letra);
 
        configurarVoI();
        configurarPoN();
@@ -180,37 +111,6 @@ void Generador_de_pulsos::ConfInicio()
 
 }
 
-void Generador_de_pulsos::readEduciaa()
-{
-    QStringList buffer_split;
-    QString serialBuffer;
-    //QByteArray serialData;
-   // QByteArray aux;
-
-
-    QByteArray serialData= Serial->readAll();
-    while(Serial->waitForReadyRead(1000))
-    {
-
-            serialData.append(Serial->readAll());
-            //serialData=Serial->readLine();
-
-    }
-
-
-         serialBuffer += QString::fromStdString(serialData.toStdString());
-         qDebug()<< serialBuffer<<"\n";
-
-         buffer_split = serialBuffer.split(",");
-         qDebug() << buffer_split;
-
-    serialBuffer = "";
-
-    serialData.clear();
-
-    ModificarDatos(buffer_split);
-
-}
 
 void Generador_de_pulsos::ModificarDatos(QStringList buffer)
 {
@@ -334,32 +234,33 @@ void Generador_de_pulsos::ModificarDatos(QStringList buffer)
 }
 
 
+
 void Generador_de_pulsos::on_NPulsos()
 {
     char letra;
     letra = 'n';
-    Serial->putChar(letra);
+    emit send_char(letra);
 }
 
 void Generador_de_pulsos::on_Tup()
 {
     char letra;
     letra = 't';
-    Serial->putChar(letra);
+    emit send_char(letra);
 }
 
 void Generador_de_pulsos::on_Periodo()
 {
     char letra;
     letra = 'p';
-    Serial->putChar(letra);
+    emit send_char(letra);
 }
 
 void Generador_de_pulsos::on_ValueUp()
 {
     char letra;
     letra = 'v';
-    Serial->putChar(letra);
+    emit send_char(letra);
 }
 
 void Generador_de_pulsos::ConfPulsos()
@@ -369,10 +270,13 @@ void Generador_de_pulsos::ConfPulsos()
     QByteArray outbyte;
     char x = (char)value;
     outbyte.append(x); //agrega el caracter al arreglo outbyte
-    //qDebug()<<"r: "<<outbyte.data();
+
+    qDebug()<<"r: "<<QString::fromStdString(outbyte.toStdString());
     //envía el valor configurado
-    Serial->write(outbyte);
-    Serial->waitForBytesWritten(10);
+    //Serial->write(outbyte);
+    emit send_byte(outbyte);
+    //Serial->waitForBytesWritten(10);
+    emit wait_written();
 }
 
 void Generador_de_pulsos::ConfTup()
@@ -388,13 +292,12 @@ void Generador_de_pulsos::ConfTup()
     y = (char)b;
     outbyte1.append(x); //agrega el caracter al arreglo outbyte
     outbyte2.append(y);
-    //qDebug()<<"r: "<<outbyte1.data();
-    //qDebug()<<"r: "<<outbyte2.data();
-    //envía el valor configurado
-    Serial->write(outbyte1);
-    // Serial->waitForBytesWritten(10);
-    Serial->write(outbyte2);
-    //Serial->waitForBytesWritten(10);
+    qDebug()<<"r: "<<QString::fromStdString(outbyte1.toStdString());
+    qDebug()<<"r: "<<QString::fromStdString(outbyte2.toStdString());
+    emit send_byte(outbyte1);
+    emit wait_written();
+    emit send_byte(outbyte2);
+    emit wait_written();
 
 }
 
@@ -411,15 +314,16 @@ void Generador_de_pulsos::ConfPeriodo()
     y = (char)b;
     outbyte1.append(x); //agrega el caracter al arreglo outbyte
     outbyte2.append(y);
-    //qDebug()<<"r: "<<'0' + outbyte1.data();
-    //qDebug()<<"r: "<<outbyte2.data();
-    //envía el valor configurado
-    Serial->write(outbyte1);
-    // Serial->waitForBytesWritten(10);
-    Serial->write(outbyte2);
-    //Serial->waitForBytesWritten(10);
+    qDebug()<<"r: "<<QString::fromStdString(outbyte1.toStdString());
+    qDebug()<<"r: "<<QString::fromStdString(outbyte2.toStdString());
 
+    emit send_byte(outbyte1);
 
+    emit wait_written();
+
+    emit send_byte(outbyte2);
+
+    emit wait_written();
 }
 
 void Generador_de_pulsos::ConfValUp()
@@ -451,13 +355,16 @@ void Generador_de_pulsos::ConfValUp()
     char y = (char)b;
     outbyte1.append(x); //agrega el caracter al arreglo outbyte
     outbyte2.append(y);
-    //qDebug()<<"r: "<<outbyte1.data();
-    //qDebug()<<"r: "<<outbyte2.data();
-    //envía el valor configurado
-    Serial->write(outbyte1);
-   // Serial->waitForBytesWritten(10);
-    Serial->write(outbyte2);
-    //Serial->waitForBytesWritten(10);;
+    qDebug()<<"r: "<<QString::fromStdString(outbyte1.toStdString());
+    qDebug()<<"r: "<<QString::fromStdString(outbyte2.toStdString());
+
+    emit send_byte(outbyte1);
+
+    emit wait_written();
+
+    emit send_byte(outbyte2);
+
+    emit wait_written();
 
 }
 
@@ -489,13 +396,16 @@ void Generador_de_pulsos::ConfValUp_tension()
     char y = (char)b;
     outbyte1.append(x); //agrega el caracter al arreglo outbyte
     outbyte2.append(y);
-    //qDebug()<<"r: "<<outbyte1.data();
-    //qDebug()<<"r: "<<outbyte2.data();
-    //envía el valor configurado
-    Serial->write(outbyte1);
-    // Serial->waitForBytesWritten(10);
-    Serial->write(outbyte2);
-    //Serial->waitForBytesWritten(10);;
+    qDebug()<<"r: "<<QString::fromStdString(outbyte1.toStdString());
+    qDebug()<<"r: "<<QString::fromStdString(outbyte2.toStdString());
+
+    emit send_byte(outbyte1);
+
+    emit wait_written();
+
+    emit send_byte(outbyte2);
+
+    emit wait_written();
 
 }
 
@@ -503,18 +413,18 @@ void Generador_de_pulsos::on_MandarPulsos_clicked()
 {
     char letra;
     letra = 'e';
-    Serial->putChar(letra);
+    emit send_char(letra);
 }
 
 void Generador_de_pulsos::on_ValoresDefault_clicked()
 {
     char letra;
     letra = 'q';
-    Serial->putChar(letra);
-    //ui->ValueN->setValue(5);
+    emit send_char(letra);
+    ui->ValueN->setValue(5);
     ui->ValueT->setValue(1);
     ui->ValueP->setValue(5);
-    //ui->doubleSpinBox->setValue(1);
+    ui->doubleSpinBox->setValue(1);
 
 }
 
@@ -523,7 +433,7 @@ void Generador_de_pulsos::on_Stop_clicked()
 
     char letra;
     letra = 'r';
-    Serial->putChar(letra);
+    emit send_char(letra);
 }
 
 //------------------------------------------
@@ -556,9 +466,9 @@ void Generador_de_pulsos::on_toolButton_3_clicked()
 {
     ui->ValueT->setValue(ui->ValueT->value()+100);
 
-    if(ui->ValueT->value()==ui->ValueP->value())
+    if(ui->ValueT->value()>=ui->ValueP->value())
      {
-        ui->ValueP->setValue(ui->ValueP->value() +1 );
+        ui->ValueP->setValue(ui->ValueT->value() +1 );
      }
 
 }
@@ -566,45 +476,45 @@ void Generador_de_pulsos::on_toolButton_3_clicked()
 void Generador_de_pulsos::on_toolButton_4_clicked()
 {
      ui->ValueT->setValue(ui->ValueT->value()-100);
-     if(ui->ValueT->value()==ui->ValueP->value())
+     if(ui->ValueT->value()>=ui->ValueP->value())
       {
-         ui->ValueP->setValue(ui->ValueP->value() +1 );
+         ui->ValueP->setValue(ui->ValueT->value() +1 );
       }
 }
 
 void Generador_de_pulsos::on_toolButton_5_clicked()
 {
     ui->ValueT->setValue(ui->ValueT->value()+10);
-    if(ui->ValueT->value()==ui->ValueP->value())
+    if(ui->ValueT->value()>=ui->ValueP->value())
      {
-        ui->ValueP->setValue(ui->ValueP->value() +1 );
+        ui->ValueP->setValue(ui->ValueT->value() +1 );
      }
 }
 
 void Generador_de_pulsos::on_toolButton_6_clicked()
 {
     ui->ValueT->setValue(ui->ValueT->value()-10);
-    if(ui->ValueT->value()==ui->ValueP->value())
+    if(ui->ValueT->value()>=ui->ValueP->value())
      {
-        ui->ValueP->setValue(ui->ValueP->value() +1 );
+        ui->ValueP->setValue(ui->ValueT->value() +1 );
      }
 }
 
 void Generador_de_pulsos::on_toolButton_21_clicked()
 {
     ui->ValueT->setValue(ui->ValueT->value()+1);
-    if(ui->ValueT->value()==ui->ValueP->value())
+    if(ui->ValueT->value()>=ui->ValueP->value())
      {
-        ui->ValueP->setValue(ui->ValueP->value() +1 );
+        ui->ValueP->setValue(ui->ValueT->value() +1 );
      }
 }
 
 void Generador_de_pulsos::on_toolButton_22_clicked()
 {
     ui->ValueT->setValue(ui->ValueT->value()-1);
-    if(ui->ValueT->value()==ui->ValueP->value())
+    if(ui->ValueT->value()>=ui->ValueP->value())
      {
-        ui->ValueP->setValue(ui->ValueP->value() +1 );
+        ui->ValueP->setValue(ui->ValueT->value() +1 );
      }
 }
 
@@ -614,18 +524,18 @@ void Generador_de_pulsos::on_toolButton_22_clicked()
 void Generador_de_pulsos::on_toolButton_7_clicked()
 {
     ui->ValueP->setValue(ui->ValueP->value()+100);
-    if(ui->ValueT->value()==ui->ValueP->value())
+    if(ui->ValueP->value()<=ui->ValueT->value())
      {
-        ui->ValueP->setValue(ui->ValueP->value() +1 );
+        ui->ValueT->setValue(ui->ValueP->value() -1 );
      }
 }
 
 void Generador_de_pulsos::on_toolButton_9_clicked()
 {
     ui->ValueP->setValue(ui->ValueP->value()-100);
-    if(ui->ValueT->value()==ui->ValueP->value())
+    if(ui->ValueP->value()<=ui->ValueT->value())
      {
-        ui->ValueP->setValue(ui->ValueP->value() +1 );
+        ui->ValueT->setValue(ui->ValueP->value() -1 );
      }
 }
 
@@ -633,9 +543,9 @@ void Generador_de_pulsos::on_toolButton_9_clicked()
 void Generador_de_pulsos::on_toolButton_8_clicked()
 {
     ui->ValueP->setValue(ui->ValueP->value()+10);
-    if(ui->ValueT->value()==ui->ValueP->value())
+    if(ui->ValueP->value()<=ui->ValueT->value())
      {
-        ui->ValueP->setValue(ui->ValueP->value() +1 );
+        ui->ValueT->setValue(ui->ValueP->value() -1 );
      }
 }
 
@@ -644,27 +554,27 @@ void Generador_de_pulsos::on_toolButton_8_clicked()
 void Generador_de_pulsos::on_toolButton_10_clicked()
 {
     ui->ValueP->setValue(ui->ValueP->value()-10);
-    if(ui->ValueT->value()==ui->ValueP->value())
+    if(ui->ValueP->value()<=ui->ValueT->value())
      {
-        ui->ValueP->setValue(ui->ValueP->value() +1 );
+        ui->ValueT->setValue(ui->ValueP->value() -1 );
      }
 }
 
 void Generador_de_pulsos::on_toolButton_19_clicked()
 {
     ui->ValueP->setValue(ui->ValueP->value()+1);
-    if(ui->ValueT->value()==ui->ValueP->value())
+    if(ui->ValueP->value()<=ui->ValueT->value())
      {
-        ui->ValueP->setValue(ui->ValueP->value() +1 );
+        ui->ValueT->setValue(ui->ValueP->value() -1 );
      }
 }
 
 void Generador_de_pulsos::on_toolButton_20_clicked()
 {
     ui->ValueP->setValue(ui->ValueP->value()-1);
-    if(ui->ValueT->value()==ui->ValueP->value())
+    if(ui->ValueP->value()<=ui->ValueT->value())
      {
-        ui->ValueP->setValue(ui->ValueP->value() +1 );
+        ui->ValueT->setValue(ui->ValueP->value() -1 );
      }
 }
 
@@ -673,32 +583,6 @@ void Generador_de_pulsos::on_toolButton_20_clicked()
 
 void Generador_de_pulsos::on_toolButton_12_clicked()
 {
-   /* if(flagVoI==1)
-    {
-        if(ui->doubleSpinBox->value()==85)
-        {
-            ui->doubleSpinBox->setValue(10);
-        }
-        else
-        {
-            ui->doubleSpinBox->setValue(ui->doubleSpinBox->value()+10);
-
-        }
-
-    }
-
-    if(flagVoI==0)
-    {
-        if(ui->doubleSpinBox->value()==170)
-        {
-            ui->doubleSpinBox->setValue(10);
-        }
-        else
-        {
-            ui->doubleSpinBox->setValue(ui->doubleSpinBox->value()+10);
-
-        }
-    }*/
 
     ui->doubleSpinBox->setValue(ui->doubleSpinBox->value()+10);
 
@@ -741,7 +625,7 @@ void Generador_de_pulsos::on_SalidaVoI_highlighted(const QString &arg1)
 
         char letra;
         letra = 'u';
-        Serial->putChar(letra);
+       emit send_char(letra);
         }
 
         if(arg1=="Salida en tensión")
@@ -755,7 +639,7 @@ void Generador_de_pulsos::on_SalidaVoI_highlighted(const QString &arg1)
 
         char letra;
         letra = 'w';
-        Serial->putChar(letra);
+       emit send_char(letra);
         }
 
     }
@@ -773,7 +657,7 @@ void Generador_de_pulsos::on_SalidaPoN_highlighted(const QString &arg1)
         ui->doubleSpinBox->setPrefix("");
         char letra;
         letra = 'o';
-        Serial->putChar(letra);
+        emit send_char(letra);
         }
         if(arg1=="Pulsos negativos")
         {
@@ -781,7 +665,7 @@ void Generador_de_pulsos::on_SalidaPoN_highlighted(const QString &arg1)
         ui->doubleSpinBox->setPrefix("-");
         char letra;
         letra = 's';
-        Serial->putChar(letra);
+        emit send_char(letra);
         }
 
     }
@@ -794,7 +678,7 @@ void Generador_de_pulsos::configurarVoI()
     {
         char letra;
         letra = 'u';
-        Serial->putChar(letra);
+        emit send_char(letra);
 
     }
 
@@ -802,7 +686,7 @@ void Generador_de_pulsos::configurarVoI()
     {
         char letra;
         letra = 'w';
-        Serial->putChar(letra);
+        emit send_char(letra);
 
     }
 
@@ -814,14 +698,14 @@ void Generador_de_pulsos::configurarPoN()
     {
         char letra;
         letra = 'o';
-        Serial->putChar(letra);
+       emit send_char(letra);
     }
 
     if(flagPoN==0)
     {
         char letra;
         letra = 's';
-        Serial->putChar(letra);
+        emit send_char(letra);
     }
 }
 

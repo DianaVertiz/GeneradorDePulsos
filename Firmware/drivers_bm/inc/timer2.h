@@ -4,7 +4,10 @@
 
 
 /*==================[inclusions]=============================================*/
+#include "chip.h"
+#include "core_cm4.h"
 #include "stdint.h"
+
 #define TIMER2_IRQn 14
 
 #define TICKRATE_HZ 1000

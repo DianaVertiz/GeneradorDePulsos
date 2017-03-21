@@ -57,8 +57,8 @@ void OpenMenu2()
 
 		else if(! (pulsado(BtnUp)) || !(pulsado(BtnDown)) )
 		{
-			TemporizadorTimer0(20);
-			ResetTimer0();
+			//TemporizadorTimer0(5);
+			//ResetTimer0();
 
 			switch(menuPosition)
 			     {
@@ -287,7 +287,7 @@ Conf_Amplitud2()
 	{
 		if(!(pulsado(BtnUp)))
 		{
-			TemporizadorTimer0(300);
+			TemporizadorTimer0(200);
 			ResetTimer0();
 			value_aux++;
 			if(DevolverFlagVoI()==1 && value_aux>85)
@@ -303,7 +303,7 @@ Conf_Amplitud2()
 
 		if(!(pulsado(BtnDown)))
 		{
-			TemporizadorTimer0(300);
+			TemporizadorTimer0(200);
 			ResetTimer0();
 
 			if(DevolverFlagVoI()==1 && value_aux==1)
@@ -342,7 +342,7 @@ Conf_Amplitud2()
 
 		if(!(pulsado(BtnEnter)))
 		{
-			TemporizadorTimer0(300);
+			TemporizadorTimer0(200);
 			ResetTimer0();
 			exit=1;
 			salir=1;
@@ -413,7 +413,7 @@ Conf_Pulsos2()
 		{
 			if(!(pulsado(BtnUp)))
 			{
-				TemporizadorTimer0(300);
+				TemporizadorTimer0(200);
 				ResetTimer0();
 				puls_aux++;
 				if(puls_aux>100)
@@ -426,7 +426,7 @@ Conf_Pulsos2()
 
 			if(!(pulsado(BtnDown)))
 			{
-				TemporizadorTimer0(300);
+				TemporizadorTimer0(200);
 				ResetTimer0();
 
 				if(puls_aux==1)
@@ -461,7 +461,7 @@ Conf_Pulsos2()
 
 			if(!(pulsado(BtnEnter)))
 			{
-				TemporizadorTimer0(300);
+				TemporizadorTimer0(200);
 				ResetTimer0();
 				exit=1;
 				salir=1;
@@ -504,7 +504,7 @@ Conf_TUp2()
 			{
 				if(!(pulsado(BtnUp)))
 				{
-					TemporizadorTimer0(300);
+					TemporizadorTimer0(200);
 					ResetTimer0();
 					tup_aux++;
 					if(tup_aux>9999)
@@ -517,7 +517,7 @@ Conf_TUp2()
 
 				if(!(pulsado(BtnDown)))
 				{
-					TemporizadorTimer0(300);
+					TemporizadorTimer0(200);
 					ResetTimer0();
 
 					if(tup_aux==1)
@@ -553,7 +553,7 @@ Conf_TUp2()
 
 				if(!(pulsado(BtnEnter)))
 				{
-					TemporizadorTimer0(300);
+					TemporizadorTimer0(200);
 					ResetTimer0();
 					exit=1;
 					salir=1;
@@ -597,7 +597,7 @@ Conf_Periodo2()
 	{
 	if(!(pulsado(BtnUp)))
 	{
-		TemporizadorTimer0(300);
+		TemporizadorTimer0(200);
 		ResetTimer0();
 		P_aux++;
 		if(P_aux>9999)
@@ -610,7 +610,7 @@ Conf_Periodo2()
 
 	if(!(pulsado(BtnDown)))
 	{
-		TemporizadorTimer0(300);
+		TemporizadorTimer0(200);
 		ResetTimer0();
 
 		if(P_aux==1)
@@ -648,7 +648,7 @@ Conf_Periodo2()
 
 	if(!(pulsado(BtnEnter)))
 	{
-		TemporizadorTimer0(300);
+		TemporizadorTimer0(200);
 		ResetTimer0();
 		exit=1;
 		salir=1;
@@ -697,7 +697,7 @@ void Polaridad()
 		{
 			if(!(pulsado(BtnDown)))
 			{
-				TemporizadorTimer0(300);
+				TemporizadorTimer0(200);
 				ResetTimer0();
 				if(variable==2){variable=1;}
 				variable++;
@@ -705,7 +705,7 @@ void Polaridad()
 			}
 			if(!(pulsado(BtnUp)))
 			{
-				TemporizadorTimer0(300);
+				TemporizadorTimer0(200);
 				ResetTimer0();
 				if(variable==2)
 				{variable--;}
@@ -735,7 +735,7 @@ void Polaridad()
 
 			if(!(pulsado(BtnEnter)))
 			{
-				TemporizadorTimer0(300);
+				TemporizadorTimer0(200);
 				ResetTimer0();
 				exit=1;
 				salir=1;
@@ -852,7 +852,7 @@ void ModoEstimulacion()
 			{
 				if(!(pulsado(BtnDown)))
 				{
-					TemporizadorTimer0(300);
+					TemporizadorTimer0(200);
 					ResetTimer0();
 					if(variable==2){variable=1;}
 					variable++;
@@ -860,7 +860,7 @@ void ModoEstimulacion()
 				}
 				if(!(pulsado(BtnUp)))
 				{
-					TemporizadorTimer0(300);
+					TemporizadorTimer0(200);
 					ResetTimer0();
 					if(variable==2)
 					{variable--;}
@@ -889,7 +889,7 @@ void ModoEstimulacion()
 
 				if(!(pulsado(BtnEnter)))
 				{
-					TemporizadorTimer0(300);
+					TemporizadorTimer0(200);
 					ResetTimer0();
 					exit=1;
 					salir=1;

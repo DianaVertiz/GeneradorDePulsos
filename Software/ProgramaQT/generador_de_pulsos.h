@@ -2,10 +2,12 @@
 #define GENERADOR_DE_PULSOS_H
 
 #include <QMainWindow>
+#include <QThread>
 #include<QMessageBox>
 #include<QtGui>
 #include<string>
 #include<iostream>
+#include "worker.h"
 
 namespace Ui {
 class Generador_de_pulsos;
@@ -14,17 +16,34 @@ class Generador_de_pulsos;
 class Generador_de_pulsos : public QMainWindow
 {
     Q_OBJECT
+    QThread cThread;
 
 public:
     explicit Generador_de_pulsos(QWidget *parent = 0);
     ~Generador_de_pulsos();
 
+
+private:
+
+
+
+    Ui::Generador_de_pulsos *ui;
+
+    int flagVoI=1; //1 en modo corriente
+    int flagPoN=1; //1 pulsos positivos
+    //flags de recepción de datos desde edu-ciaa
+    //si flag=1 recibo desde educiaa
+    int flag1=0; //VoI
+    int flag2=0; //PoN
+    int flagN=0;
+    int flagV=0;
+    int flagT=0;
+    int flagP=0;
+
 private slots:
 
 
     void ConfInicio();
-
-   void readEduciaa();
 
     void on_NPulsos();
 
@@ -90,7 +109,7 @@ private slots:
 
     void on_toolButton_18_clicked();
 
-    void on_radioButton_clicked();
+
 
     void on_SalidaVoI_highlighted(const QString &arg1);
 
@@ -108,27 +127,30 @@ private slots:
 
     void on_ValueP_valueChanged(int arg1);
 
-    void on_radioButton_2_clicked();
+    //void on_radioButton_2_clicked();
 
-    void recibir_comVirtual();
+    //void recibir_comVirtual();
 
     void ModificarDatos(QStringList);
-private:
 
-    Ui::Generador_de_pulsos *ui;
-    int flagVoI=1; //1 en modo corriente
-    int flagPoN=1; //1 pulsos positivos
-    //flags de recepción de datos desde edu-ciaa
-    //si flag=1 recibo desde educiaa
-    int flag1=0; //VoI
-    int flag2=0; //PoN
-    int flagN=0;
-    int flagV=0;
-    int flagT=0;
-    int flagP=0;
-    //QByteArray serialData;
-    //QString serialBuffer;
+    void messageWarning(QString title,QString mensaje);
 
+    void namePort();
+    void namePort_2();
+
+    void messageInfo(QString title, QString mensaje);
+
+    void animate_click();
+    void animate_click_2();
+
+signals:
+
+    void openPort();
+    void nomPort(QString nameport);
+    void nomPort_2(QString nameport);
+    void send_char(char c);
+    void send_byte(QByteArray outbyte);
+    void wait_written();
 };
 
 #endif // GENERADOR_DE_PULSOS_H
