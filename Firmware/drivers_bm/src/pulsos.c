@@ -74,15 +74,20 @@ void ResetValues()
 void GenerarPulsos()
 {
 	uint16_t pulsos =0;
-	uint16_t valor;
-
+	//uint16_t valor;
 	value_up=(VALUE_UP*1023)/VCC;
 	value_down=(VALUE_DOWN*1023)/VCC;
 	TIMER_DOWN=PERIODO-TIMER_UP;
 
+	ReanudarEstimulador(); //GPIO6 para conectar relé
+	TemporizadorTimer0(10);
+	ResetTimer0();
+
 	while(pulsos < N_PULSOS)
-	   {	EncenderLed();
-	    	EncenderLeds(3);
+	   {
+			EncenderLed(); //led de visualización en el gabinete en este caso GPIO8
+			EncenderLeds(3); //led de prueba en la placa
+
 	    	Conversion(value_up);
 	    	TemporizadorTimer0(TIMER_UP-1);
 	    	ApagarLeds(3);
@@ -93,7 +98,11 @@ void GenerarPulsos()
 
 	    	pulsos++;
 	    }
-	if(N_PULSOS*PERIODO > 500){ ApagarLed();}
+	DetenerEstimulador();
+	if(N_PULSOS*PERIODO > 500)
+	{
+		ApagarLed();
+	}
 	else
 	{
 		TemporizadorTimer0(500-(N_PULSOS*PERIODO));

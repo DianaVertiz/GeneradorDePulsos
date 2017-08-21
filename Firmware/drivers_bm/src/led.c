@@ -33,7 +33,8 @@ Chip_GPIO_SetPinOutHigh(LPC_GPIO_PORT,2,8);
 
  }
 
-void ApagarLed(){
+void ApagarLed()
+{
 
 Chip_GPIO_SetPinOutLow(LPC_GPIO_PORT,2,8);
 

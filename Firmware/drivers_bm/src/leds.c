@@ -93,7 +93,8 @@
  *          warnings or errors.
  */
 
-void InicializarLeds(void){
+void InicializarLeds(void)
+{
 
 Chip_GPIO_Init(LPC_GPIO_PORT);
 Chip_SCU_PinMux(2,0,MD_PUP,FUNC4);
@@ -116,7 +117,8 @@ Chip_GPIO_ClearValue(LPC_GPIO_PORT, 1,(1<<11)|(1<<12));
 
 }
 
-void EncenderLeds(uint8_t led){
+void EncenderLeds(uint8_t led)
+{
 
 	switch(led)
 	{
@@ -144,7 +146,8 @@ void EncenderLeds(uint8_t led){
 
  }
 
-void ApagarLeds(uint8_t led){
+void ApagarLeds(uint8_t led)
+{
 
 	switch(led)
 	{

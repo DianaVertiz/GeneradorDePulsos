@@ -17,7 +17,7 @@ void inicializarPulsadores()
 	GPIO_Set_Dir( GPIO2 , INPUT);
 	GPIO_Set_Dir( GPIO3 , INPUT);
 	GPIO_Set_Dir( GPIO4 , INPUT);
-	GPIO_Set_Dir( GPIO6 , INPUT);
+	GPIO_Set_Dir( GPIO6 , OUTPUT);
 
 
 }
@@ -74,12 +74,12 @@ uint8_t ReadPulsador() //devuele la tecla pulsada
 
 void DetenerEstimulador()
 {
-	GPIO_Write(GPIO6, 1);
+	GPIO_Write(GPIO6, 0);
 }
 
 void ReanudarEstimulador()
 {
-	GPIO_Write(GPIO6, 0);
+	GPIO_Write(GPIO6, 1);
 }
 
 

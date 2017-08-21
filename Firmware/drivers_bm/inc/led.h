@@ -69,8 +69,8 @@
 /*==================[external functions declaration]=========================*/
 
 void InicializarLed(void);
-void EncenderLed();
-void ApagarLed();
+void EncenderLed(void);
+void ApagarLed(void);
 
 
 /** @} doxygen end group definition */
