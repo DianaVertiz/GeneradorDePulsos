@@ -80,7 +80,7 @@ void GenerarPulsos()
 	TIMER_DOWN=PERIODO-TIMER_UP;
 
 	ReanudarEstimulador(); //GPIO6 para conectar relé
-	TemporizadorTimer0(10);
+	TemporizadorTimer0(delay_rele);
 	ResetTimer0();
 
 	while(pulsos < N_PULSOS)

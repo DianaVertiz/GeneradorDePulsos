@@ -14,7 +14,7 @@
 //========================================================================
 #define VALUE 1023
 #define VCC 3300
-
+#define delay_rele 10
 
 uint16_t N_PULSOS=5; //n
 uint16_t VALUE_UP=33;//u  voltaje o corriente
@@ -26,6 +26,7 @@ uint32_t value_down;
 uint32_t value_up;
 uint8_t flagVoI=1; //1 Modo corriente
 uint8_t flagPoN=1; //1 Pulsos positivos
+
 //const uint32_t value_down_d=(VALUE_DOWN_D*1023)/VCC;
 //const uint32_t value_up_d=(VALUE_UP_D*1023)/VCC;
 //const uint32_t TIMER_DOWN_D=PERIODO_D-TIMER_UP_D;
